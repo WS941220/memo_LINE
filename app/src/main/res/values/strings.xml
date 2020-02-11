@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">memo_LINE</string>
+    <string name="title">모든 노트</string>
+    <string name="edit">편집</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
