@@ -3,13 +3,16 @@ package com.example.memo_line.ui.addeditmemo
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
+import android.content.ContentValues
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.memo_line.R
 import com.example.memo_line.di.DaggerFragmentComponent
 import com.example.memo_line.di.module.FragmentModule
@@ -17,15 +20,14 @@ import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.util.showSnackBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_add_edit_memo.*
 import java.io.File
 import javax.inject.Inject
 
-class AddEditMemoFragment : Fragment(), AddEditMemoContract.View {
-    private lateinit var title: TextView
-    private lateinit var content: TextView
+class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAdapter.onItemClickListener {
 
     companion object {
-        const val ARGUMENT_EDIT_MEMO_ID = "EDIT_TASK_ID"
+        const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
         const val PICK_GALLERY_ID = 1
 
         fun newInstance(memoId: String?) =
@@ -35,6 +37,9 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View {
                 }
             }
     }
+
+    private lateinit var title: TextView
+    private lateinit var content: TextView
 
     @Inject
     lateinit var presenter: AddEditMemoContract.Presenter
@@ -124,16 +129,29 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View {
     }
 
     override fun showSuccessGallery(data: Intent?) {
+        val clipData = data?.clipData
         if(data == null) {
         } else {
-            if(data.clipData == null) {
+            if(clipData == null) {
                 presenter.showMessage(getString(R.string.fail_multi_gallery))
             } else {
-                var clipData = data.clipData
-                if(clipData?.itemCount!! > 9) {
+                if(clipData.itemCount > 9) {
                     presenter.showMessage(getString(R.string.fail_over_gallery))
-                } else if(clipData?.itemCount!! == 1) {
-                    var imagePath = clipData.getItemAt(0).uri
+                } else {
+                    val picItem: ArrayList<Uri>
+                    picItem = ArrayList()
+                   for (i in 0..clipData.itemCount-1) {
+                       val imagePath = clipData.getItemAt(i).uri
+                       picItem.add(imagePath)
+                   }
+
+                    val adapter = AddEditMemoAdapter(context, picItem, this)
+                    if(picRecycler!!.layoutManager == null) {
+                        picRecycler!!.layoutManager = GridLayoutManager(context, 3)
+                    } else {
+                        adapter.notifyItemInserted(1)
+                    }
+                    picRecycler!!.setAdapter(adapter)
                 }
             }
         }

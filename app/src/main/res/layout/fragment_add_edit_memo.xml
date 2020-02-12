@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.addeditmemo.AddEditMemoFragment">
 
     <LinearLayout
@@ -31,19 +32,18 @@
         <EditText
             android:id="@+id/add_memo_content"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="wrap_content"
+            android:minHeight="350dp"
             android:gravity="top"
             android:hint="@string/content_hint" />
 
     </LinearLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/picView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/picRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-    </androidx.viewpager.widget.ViewPager>
+        android:layout_gravity="center"/>
 
     </LinearLayout>
 
