@@ -7,13 +7,14 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.memo_line.R
 import com.example.memo_line.di.DaggerActivityComponent
+import com.example.memo_line.util.replaceFragmentInActivity
 import com.example.memo_line.util.setupActionBar
 import com.example.practice_test.di.module.ActivityModule
 import com.google.android.material.navigation.NavigationView
 import dagger.Lazy
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var presenter: MainContract.Presenter
@@ -24,7 +25,6 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        injectDependency()
 
         /**
          * 툴바
@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity(){
         }
         setupDrawerContent(findViewById(R.id.nav_view))
 
-        var mainFragment: MainFragment? = supportFragmentManager.findFragmentById(R.id.contentFrame) as MainFragment?
-        if (mainFragment == null) {
-            supportFragmentManager.beginTransaction().add(R.id.contentFrame, MainFragment().newInstance(), MainFragment.TAG).commit()
+        supportFragmentManager.findFragmentById(R.id.contentFrame)
+                as MainFragment? ?: MainFragment.newInstance().also {
+            replaceFragmentInActivity(it, R.id.contentFrame)
         }
     }
 
@@ -74,14 +74,14 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    /**
-     * Dagger 의존성 주입
-     */
-    private fun injectDependency() {
-        val activityComponent = DaggerActivityComponent.builder()
-            .activityModule(ActivityModule(this))
-            .build()
-        activityComponent.inject(this)
-    }
+//    /**
+//     * Dagger 의존성 주입
+//     */
+//    private fun injectDependency() {
+//        val activityComponent = DaggerActivityComponent.builder()
+//            .activityModule(ActivityModule(this))
+//            .build()
+//        activityComponent.inject(this)
+//    }
 }
 

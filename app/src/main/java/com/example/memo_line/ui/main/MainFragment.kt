@@ -17,15 +17,15 @@ import javax.inject.Inject
 class MainFragment : Fragment(), MainContract.View {
     companion object {
         val TAG: String = "MainFragment"
+
+        fun newInstance(): MainFragment {
+            return MainFragment()
+        }
     }
 
     @Inject
     lateinit var presenter: MainContract.Presenter
-    private lateinit var root: View
-
-    fun newInstance(): MainFragment {
-        return MainFragment()
-    }
+    private lateinit var rootView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,7 @@ class MainFragment : Fragment(), MainContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        root = inflater.inflate(R.layout.fragment_main, container, false)
+        rootView = inflater.inflate(R.layout.fragment_main, container, false)
 
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply {
             setImageResource(R.drawable.ic_create)
@@ -53,7 +53,7 @@ class MainFragment : Fragment(), MainContract.View {
         }
         setHasOptionsMenu(true)
 
-        return root
+        return rootView
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
