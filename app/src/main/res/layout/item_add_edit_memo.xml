@@ -2,10 +2,18 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:id="@+id/picCard"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:layout_marginLeft="@dimen/activity_vertical_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin">
+    android:layout_width="85dp"
+    android:layout_height="85dp"
+    android:layout_marginLeft="@dimen/card_margin_side"
+    android:layout_marginTop="@dimen/card_margin_top">
+
+    <ImageButton
+        android:id="@+id/picRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_remove"
+        android:background="#8C8C8C"
+        android:layout_gravity="end"/>
 
     <ImageView
         android:id="@+id/pic"

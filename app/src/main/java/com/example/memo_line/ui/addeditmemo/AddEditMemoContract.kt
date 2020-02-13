@@ -14,7 +14,11 @@ interface AddEditMemoContract {
 
         fun showGallery()
 
+        fun showCamera()
+
         fun showSuccessGallery(data: Intent?)
+
+        fun showSuccessCamera()
     }
 
     interface Presenter: BaseContract.Presenter<View> {
@@ -25,6 +29,8 @@ interface AddEditMemoContract {
         fun saveMemo(title: String, content: String)
 
         fun callGallery()
+
+        fun callCamera()
     }
 }
 

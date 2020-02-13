@@ -25,17 +25,27 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
     override fun attach(view: AddEditMemoContract.View) {
         this.view = view
     }
+
     override fun showMessage(msg: String) {
         view.showMessage(msg)
     }
 
     override fun result(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (AddEditMemoFragment.PICK_GALLERY_ID ==
-            requestCode && Activity.RESULT_OK == resultCode) {
-            view.showSuccessGallery(data)
+        if(Activity.RESULT_OK == resultCode) {
+            when(requestCode) {
+                AddEditMemoFragment.PICK_GALLERY_ID ->{
+                    view.showSuccessGallery(data)
+                }
+                AddEditMemoFragment.PICK_CAMERA_ID -> {
+                    view.showSuccessCamera()
+                }
+            }
         }
     }
 
+    /**
+     * 메모 저장
+     */
     override fun saveMemo(title: String, content: String) {
         if (memoId == null) {
             createMemo(title, content)
@@ -47,6 +57,10 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
 
     override fun callGallery() {
         view.showGallery()
+    }
+
+    override fun callCamera() {
+        view.showCamera()
     }
 
     private fun createMemo(title: String, content: String) {

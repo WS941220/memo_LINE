@@ -5,14 +5,21 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
 import com.example.memo_line.di.DaggerFragmentComponent
 import com.example.memo_line.di.module.FragmentModule
@@ -22,13 +29,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_edit_memo.*
 import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
-class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAdapter.onItemClickListener {
+class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
+    AddEditMemoAdapter.onItemClickListener {
+
 
     companion object {
         const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
         const val PICK_GALLERY_ID = 1
+        const val PICK_CAMERA_ID = 2
+
 
         fun newInstance(memoId: String?) =
             AddEditMemoFragment().apply {
@@ -38,8 +53,17 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
             }
     }
 
+
     private lateinit var title: TextView
     private lateinit var content: TextView
+    private lateinit var picRecyler: RecyclerView
+
+    private var currentPhotoPath = ""
+    private lateinit var photoURI: Uri
+
+    private val picItem = ArrayList<Uri>()
+    private lateinit var picAdapter: AddEditMemoAdapter
+
 
     @Inject
     lateinit var presenter: AddEditMemoContract.Presenter
@@ -67,11 +91,16 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_add_edit_memo, container, false)
+        picAdapter = AddEditMemoAdapter(context, picItem, this)
 
         with(rootView) {
+            picRecyler = findViewById(R.id.picRecyler)
             title = findViewById(R.id.add_memo_title)
             content = findViewById(R.id.add_memo_content)
         }
+        picRecyler.layoutManager = GridLayoutManager(context, 3)
+        picRecyler.adapter = picAdapter
+
         setHasOptionsMenu(true)
 
         return rootView
@@ -83,18 +112,30 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
         presenter.subscribe()
     }
 
+    /**
+     * 요청 응답
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         presenter.result(requestCode, resultCode, data)
     }
 
+    /**
+     * 스낵바 메시지
+     */
     override fun showMessage(msg: String) {
         view?.showSnackBar(msg, Snackbar.LENGTH_LONG)
     }
 
+    /**
+     * 툴바메뉴 아이템 inflate
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_fragment_menu, menu)
     }
 
+    /**
+     * 툴바메뉴 설정
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_attach -> showFilteringPopUpMenu()
@@ -102,6 +143,9 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
         return true
     }
 
+    /**
+     * 툴바메뉴 아이템
+     */
     override fun showFilteringPopUpMenu() {
         val activity = activity ?: return
         val context = context ?: return
@@ -109,7 +153,7 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
             menuInflater.inflate(R.menu.attach_menu, menu)
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-//                    R.id.active -> presenter.currentFiltering = TasksFilterType.ACTIVE_TASKS
+                    R.id.camera -> presenter.callCamera()
                     R.id.gallery -> presenter.callGallery()
                 }
 //                presenter.loadTasks(false)
@@ -119,6 +163,9 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
         }
     }
 
+    /**
+     * 갤러리 실행
+     */
     @SuppressLint("IntentReset")
     override fun showGallery() {
         val intent = Intent(Intent.ACTION_PICK)
@@ -128,34 +175,135 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
         startActivityForResult(intent, PICK_GALLERY_ID)
     }
 
+    /**
+     * 갤러리 사진 선택 후
+     */
     override fun showSuccessGallery(data: Intent?) {
         val clipData = data?.clipData
-        if(data == null) {
+        if (data == null) {
         } else {
-            if(clipData == null) {
+            if (clipData == null) {
                 presenter.showMessage(getString(R.string.fail_multi_gallery))
             } else {
-                if(clipData.itemCount > 9) {
-                    presenter.showMessage(getString(R.string.fail_over_gallery))
-                } else {
-                    val picItem: ArrayList<Uri>
-                    picItem = ArrayList()
-                   for (i in 0..clipData.itemCount-1) {
-                       val imagePath = clipData.getItemAt(i).uri
-                       picItem.add(imagePath)
-                   }
-
-                    val adapter = AddEditMemoAdapter(context, picItem, this)
-                    if(picRecycler!!.layoutManager == null) {
-                        picRecycler!!.layoutManager = GridLayoutManager(context, 3)
-                    } else {
-                        adapter.notifyItemInserted(1)
-                    }
-                    picRecycler!!.setAdapter(adapter)
+                for (i in 0..clipData.itemCount - 1) {
+                    val imagePath = clipData.getItemAt(i).uri
+                    picItem.add(imagePath)
                 }
+                picAdapter.notifyDataSetChanged()
             }
         }
     }
+
+    /**
+     * 카메라 권한 체크
+     */
+    override fun showCamera() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (context?.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        android.Manifest.permission.CAMERA
+                    )
+                } != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                    context!!,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                activity?.let {
+                    ActivityCompat.requestPermissions(
+                        it,
+                        arrayOf(
+                            android.Manifest.permission.CAMERA,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ), PICK_GALLERY_ID
+                    )
+                }
+            } else {
+                openCamera()
+            }
+        } else {
+            openCamera()
+        }
+    }
+
+    /**
+     * 카메라 실행
+     */
+    private fun openCamera() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
+            // Ensure that there's a camera activity to handle the intent
+            intent.resolveActivity(context!!.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                     photoURI = FileProvider.getUriForFile(
+                        context!!,
+                        "com.example.memo_line",
+                        it
+                    )
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(intent, PICK_CAMERA_ID)
+                }
+            }
+        }
+
+//        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+//            takePictureIntent.resolveActivity(context!!.packageManager)?.also {
+//                startActivityForResult(takePictureIntent, PICK_CAMERA_ID)
+//            }
+//        }
+    }
+
+
+    /**
+     * custom file 경로
+     */
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    /**
+     * 카메라 사진 추가
+     */
+    override fun showSuccessCamera() {
+        picItem.add(photoURI)
+        picAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * 사진 삭제
+     */
+    override fun itemRemove(position: Int) {
+        picItem.removeAt(position)
+        picAdapter.notifyDataSetChanged()
+    }
+
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        if (requestCode == PICK_GALLERY_ID) {
+//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+//                openCamera()
+//            } else {
+//            }
+//        }
+//    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -174,5 +322,6 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View, AddEditMemoAda
             DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
         addEditMemoFragment.inject(this)
     }
+
 
 }
