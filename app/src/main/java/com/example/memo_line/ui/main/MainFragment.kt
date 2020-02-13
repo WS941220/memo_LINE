@@ -7,16 +7,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
+import com.example.memo_line.data.Memo
 import com.example.memo_line.di.DaggerFragmentComponent
 import com.example.memo_line.di.module.FragmentModule
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
+import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
 class MainFragment : Fragment(), MainContract.View {
     companion object {
-        val TAG: String = "MainFragment"
 
         fun newInstance(): MainFragment {
             return MainFragment()
@@ -26,6 +30,11 @@ class MainFragment : Fragment(), MainContract.View {
     @Inject
     lateinit var presenter: MainContract.Presenter
     private lateinit var rootView: View
+
+    private lateinit var mainRecycler: RecyclerView
+
+    private val mainItem = ArrayList<Memo>()
+    private lateinit var mainAdapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +60,15 @@ class MainFragment : Fragment(), MainContract.View {
             setImageResource(R.drawable.ic_create)
             setOnClickListener { presenter.addNewMemo() }
         }
+
+//        mainAdapter = AddEditMemoAdapter(context, mainItem, this)
+
+        with(rootView) {
+            mainRecycler = findViewById(R.id.mainRecycler)
+        }
+        mainRecycler.layoutManager = LinearLayoutManager(context)
+        mainRecycler.adapter = mainAdapter
+
         setHasOptionsMenu(true)
 
         return rootView
