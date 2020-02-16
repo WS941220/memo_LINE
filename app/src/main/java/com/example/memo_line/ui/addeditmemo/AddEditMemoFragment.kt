@@ -21,12 +21,15 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
+import com.example.memo_line.di.AppComponent
 import com.example.memo_line.di.DaggerFragmentComponent
 import com.example.memo_line.di.module.FragmentModule
+import com.example.memo_line.di.module.RepositoryMoudle
 import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.util.showSnackBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.DaggerApplication
 import kotlinx.android.synthetic.main.fragment_add_edit_memo.*
 import java.io.File
 import java.io.IOException
@@ -37,7 +40,6 @@ import kotlin.collections.ArrayList
 
 class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
     AddEditMemoAdapter.onItemClickListener {
-
 
     companion object {
         const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
@@ -321,6 +323,9 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
         val addEditMemoFragment =
             DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
         addEditMemoFragment.inject(this)
+    }
+
+    private fun injectDependenc2y() {
     }
 
 

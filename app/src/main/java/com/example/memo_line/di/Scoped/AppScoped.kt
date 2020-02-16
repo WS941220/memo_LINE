@@ -1,8 +1,8 @@
-package com.example.practice_test.di.Scoped
+package com.example.memo_line.di.Scoped
 
 import javax.inject.Scope
 
 @MustBeDocumented
 @Scope
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class ActivityScoped
+annotation class AppScoped

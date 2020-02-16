@@ -11,16 +11,6 @@ class MainDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_detail)
-        injectDependency()
     }
 
-    /**
-     * Dagger 의존성 주입
-     */
-    private fun injectDependency() {
-        val activityComponent = DaggerActivityComponent.builder()
-            .activityModule(ActivityModule(this))
-            .build()
-        activityComponent.inject(this)
-    }
 }

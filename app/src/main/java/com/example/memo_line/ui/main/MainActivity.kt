@@ -7,24 +7,24 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.memo_line.R
 import com.example.memo_line.di.DaggerActivityComponent
+import com.example.memo_line.di.DaggerAppComponent
+import com.example.memo_line.di.module.RepositoryMoudle
 import com.example.memo_line.util.replaceFragmentInActivity
 import com.example.memo_line.util.setupActionBar
 import com.example.practice_test.di.module.ActivityModule
+import com.example.practice_test.di.module.ApplicationModule
 import com.google.android.material.navigation.NavigationView
 import dagger.Lazy
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var presenter: MainContract.Presenter
-
     private lateinit var drawerLayout: DrawerLayout
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        injectDependency()
 
         /**
          * 툴바
@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            // Open the navigation drawer when the home icon is selected from the toolbar.
             drawerLayout.openDrawer(GravityCompat.START)
             return true
         }
@@ -74,14 +73,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    /**
-//     * Dagger 의존성 주입
-//     */
+    /**
+     * Dagger 의존성 주입
+     */
 //    private fun injectDependency() {
-//        val activityComponent = DaggerActivityComponent.builder()
-//            .activityModule(ActivityModule(this))
-//            .build()
-//        activityComponent.inject(this)
+//        DaggerAppComponent.builder()
+//            .applicationModule(ApplicationModule(application))
+//            .repositoryMoudle(RepositoryMoudle(application)).build().inject(this)
 //    }
 }
 

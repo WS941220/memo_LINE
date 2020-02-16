@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
 import com.example.memo_line.data.Memo
+import com.example.memo_line.data.source.MemosDataSource
 import com.example.memo_line.di.DaggerFragmentComponent
 import com.example.memo_line.di.module.FragmentModule
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
@@ -19,9 +21,8 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
-class MainFragment : Fragment(), MainContract.View {
+class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListener {
     companion object {
-
         fun newInstance(): MainFragment {
             return MainFragment()
         }
@@ -55,13 +56,13 @@ class MainFragment : Fragment(), MainContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_main, container, false)
+        mainAdapter = MainAdapter(context, mainItem, this)
+        presenter.loadMemos()
 
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply {
             setImageResource(R.drawable.ic_create)
             setOnClickListener { presenter.addNewMemo() }
         }
-
-//        mainAdapter = AddEditMemoAdapter(context, mainItem, this)
 
         with(rootView) {
             mainRecycler = findViewById(R.id.mainRecycler)
@@ -77,6 +78,12 @@ class MainFragment : Fragment(), MainContract.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         presenter.result(requestCode, resultCode)
     }
+
+
+    override fun showMemos(memos: ArrayList<Memo>) {
+        mainAdapter.memos = memos
+    }
+
 
     override fun showAddMemo() {
         val intent = Intent(context, AddEditMemoActivity::class.java)

@@ -13,7 +13,7 @@ import dagger.Provides
 class FragmentModule {
 
     @Provides
-    fun provideMainPresenter(): MainContract.Presenter {
+    fun provideMainPresenter() : MainContract.Presenter {
         return MainPresenter()
     }
 

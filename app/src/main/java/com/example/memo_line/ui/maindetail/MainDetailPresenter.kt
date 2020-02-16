@@ -2,7 +2,7 @@ package com.example.memo_line.ui.maindetail
 
 import io.reactivex.disposables.CompositeDisposable
 
-class MainDetailPresenter: MainDetailContract.Presenter {
+class MainDetailPresenter : MainDetailContract.Presenter {
 
     private val subscriptions = CompositeDisposable()
     private lateinit var view: MainDetailContract.View

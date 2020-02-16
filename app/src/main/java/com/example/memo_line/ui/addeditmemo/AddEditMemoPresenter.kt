@@ -3,16 +3,20 @@ import android.app.Activity
 import android.content.Intent
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
+import com.example.memo_line.data.source.MemosRepository
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
 class AddEditMemoPresenter : AddEditMemoContract.Presenter {
 
     private val subscriptions = CompositeDisposable()
 
     private val memoId: String? = null
-    private val respository: MemosDataSource? = null
+
+    private val memosDatSource: MemosDataSource? = null
+
     private lateinit var view: AddEditMemoContract.View
 
     override fun subscribe() {
@@ -68,7 +72,7 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
         if (newMemo.isEmpty) {
 //            view.showEmptyTaskError()
         } else {
-            respository?.saveMemo(newMemo)
+            memosDatSource?.insertMemo(newMemo)
             view.showMemosList()
         }
     }
