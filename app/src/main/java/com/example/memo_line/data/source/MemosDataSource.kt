@@ -1,15 +1,16 @@
 package com.example.memo_line.data.source
 
-import androidx.lifecycle.LiveData
 import com.example.memo_line.data.Memo
-import javax.inject.Inject
 
 interface MemosDataSource {
 
-    fun getMemos(): LiveData<ArrayList<Memo>>
-//
-//    fun getTask(taskId: String, callback: GetTaskCallback)
-//
+    interface LoadMemosCallback {
+        fun onMemoLoaded(memo: List<Memo>)
+        fun onDataNotAvailable()
+    }
+
+    fun getMemos(callback: LoadMemosCallback)
+
     fun insertMemo(memo: Memo)
 //
 //    fun completeTask(task: Task)

@@ -2,6 +2,7 @@ package com.example.memo_line.ui.main
 
 import android.content.Intent
 import com.example.memo_line.base.BaseContract
+import com.example.memo_line.base.BaseView
 
 
 interface AddEditMemoContract {
@@ -21,7 +22,7 @@ interface AddEditMemoContract {
         fun showSuccessCamera()
     }
 
-    interface Presenter: BaseContract.Presenter<View> {
+    interface Presenter : BaseContract.Presenter<View> {
         fun showMessage(msg: String)
 
         fun result(requestCode: Int, resultCode: Int, data: Intent?)
@@ -33,4 +34,5 @@ interface AddEditMemoContract {
         fun callCamera()
     }
 }
+
 

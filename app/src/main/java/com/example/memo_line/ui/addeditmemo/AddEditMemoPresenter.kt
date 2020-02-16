@@ -1,6 +1,7 @@
 package com.example.memo_line.ui.main
 import android.app.Activity
 import android.content.Intent
+import com.example.memo_line.base.BasePresenter
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
 import com.example.memo_line.data.source.MemosRepository
@@ -9,21 +10,18 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AddEditMemoPresenter : AddEditMemoContract.Presenter {
-
-    private val subscriptions = CompositeDisposable()
+class AddEditMemoPresenter @Inject constructor( private val disposables: CompositeDisposable) : BasePresenter<AddEditMemoContract.View?>(), AddEditMemoContract.Presenter {
 
     private val memoId: String? = null
-
     private val memosDatSource: MemosDataSource? = null
 
-    private lateinit var view: AddEditMemoContract.View
 
     override fun subscribe() {
 
     }
     override fun unsubscribe() {
-        subscriptions.clear()
+        disposables.clear()
+        disposables.dispose()
     }
 
     override fun attach(view: AddEditMemoContract.View) {
@@ -31,17 +29,17 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
     }
 
     override fun showMessage(msg: String) {
-        view.showMessage(msg)
+        view?.showMessage(msg)
     }
 
     override fun result(requestCode: Int, resultCode: Int, data: Intent?) {
         if(Activity.RESULT_OK == resultCode) {
             when(requestCode) {
                 AddEditMemoFragment.PICK_GALLERY_ID ->{
-                    view.showSuccessGallery(data)
+                    view?.showSuccessGallery(data)
                 }
                 AddEditMemoFragment.PICK_CAMERA_ID -> {
-                    view.showSuccessCamera()
+                    view?.showSuccessCamera()
                 }
             }
         }
@@ -60,11 +58,11 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
     }
 
     override fun callGallery() {
-        view.showGallery()
+        view?.showGallery()
     }
 
     override fun callCamera() {
-        view.showCamera()
+        view?.showCamera()
     }
 
     private fun createMemo(title: String, content: String) {
@@ -73,7 +71,7 @@ class AddEditMemoPresenter : AddEditMemoContract.Presenter {
 //            view.showEmptyTaskError()
         } else {
             memosDatSource?.insertMemo(newMemo)
-            view.showMemosList()
+            view?.showMemosList()
         }
     }
 

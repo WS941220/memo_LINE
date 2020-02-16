@@ -1,41 +1,16 @@
 package com.example.memo_line.base
 
-import android.app.Application
-import com.example.memo_line.BuildConfig
-import com.example.memo_line.di.AppComponent
+import androidx.annotation.VisibleForTesting
+import com.example.memo_line.data.source.MemosRepository
 import com.example.memo_line.di.DaggerAppComponent
-import com.example.memo_line.di.module.RepositoryMoudle
-import com.example.practice_test.di.module.ApplicationModule
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import javax.inject.Inject
 
+class BaseApp : DaggerApplication() {
 
-class BaseApp: Application() {
-
-    @Inject
-    lateinit var component: AppComponent
-
-    override fun onCreate() {
-        super.onCreate()
-        instance = this
-        setup()
-
-        if (BuildConfig.DEBUG) {
-            // Maybe TimberPlant etc.
-        }
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent.builder().application(this).build()
     }
 
-    fun setup()  {
-        component = DaggerAppComponent.builder()
-            .applicationModule(ApplicationModule(this))
-            .repositoryMoudle(RepositoryMoudle(this)).build()
-        component.inject(this)
-    }
-
-    fun getApplicationComponent(): AppComponent {
-        return component
-    }
-
-    companion object {
-        lateinit var instance: BaseApp private set
-    }
 }

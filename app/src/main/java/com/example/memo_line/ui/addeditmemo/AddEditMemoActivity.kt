@@ -1,15 +1,13 @@
 package com.example.memo_line.ui.addeditmemo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.memo_line.R
-import com.example.memo_line.di.DaggerActivityComponent
-import com.example.memo_line.ui.main.MainFragment
 import com.example.memo_line.util.replaceFragmentInActivity
 import com.example.memo_line.util.setupActionBar
-import com.example.practice_test.di.module.ActivityModule
+import dagger.android.support.DaggerAppCompatActivity
 
-class AddEditMemoActivity : AppCompatActivity() {
+
+class AddEditMemoActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val REQUEST_ADD_MEMO = 1
@@ -35,7 +33,6 @@ class AddEditMemoActivity : AppCompatActivity() {
             }
 
     }
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true

@@ -1,11 +1,10 @@
 package com.example.memo_line.ui.main
+
 import android.app.Activity
-import android.widget.Toast
-import androidx.annotation.Nullable
+import com.example.memo_line.base.BasePresenter
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
 import com.example.memo_line.data.source.MemosRepository
-import com.example.memo_line.data.source.local.MemoDao
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.practice_test.di.Scoped.ActivityScoped
 import io.reactivex.disposables.CompositeDisposable
@@ -13,13 +12,10 @@ import java.util.*
 import javax.inject.Inject
 
 @ActivityScoped
-class MainPresenter : MainContract.Presenter {
-
-    private val subscriptions = CompositeDisposable()
-    private lateinit var view: MainContract.View
-
-    private val memoDataSource: MemosDataSource? = null
-
+class MainPresenter @Inject constructor(
+    private val disposables: CompositeDisposable,
+    private val memosRepository: MemosRepository
+) : BasePresenter<MainContract.View?>(), MainContract.Presenter {
 
     private var firstLoad = true
 
@@ -27,12 +23,15 @@ class MainPresenter : MainContract.Presenter {
     }
 
     override fun unsubscribe() {
-        subscriptions.clear()
+        super.unsubscribe()
+        disposables.clear()
+        disposables.dispose()
     }
 
     override fun attach(view: MainContract.View) {
         this.view = view
     }
+
 
     override fun loadMemos() {
 //        if (showLoadingUI) {
@@ -41,17 +40,26 @@ class MainPresenter : MainContract.Presenter {
 //        if (forceUpdate) {
 //            respository.refreshTasks()
 //        }
-          var a = memoDataSource?.getMemos()
-//        processMemos()
+        memosRepository.getMemos(object : MemosDataSource.LoadMemosCallback {
+            override fun onMemoLoaded(memos: List<Memo>) {
+                val memosToShow = ArrayList<Memo>()
+                for (memo in memos) {
+                    memosToShow.add(memo)
+                }
+                processMemos(memosToShow)
+            }
+
+            override fun onDataNotAvailable() {
+            }
+        })
     }
 
-    private fun processMemos(memos: ArrayList<Memo>) {
+    private fun processMemos(memos: List<Memo>) {
         if (memos.isEmpty()) {
-            // Show a message indicating there are no tasks for that filter type.
             processEmptyMemos()
         } else {
             // Show the list of tasks
-            view.showMemos(memos)
+            view?.showMemos(memos)
         }
     }
 
@@ -62,14 +70,15 @@ class MainPresenter : MainContract.Presenter {
     override fun result(requestCode: Int, resultCode: Int) {
         // If a task was successfully added, show snackbar
         if (AddEditMemoActivity.REQUEST_ADD_MEMO ==
-            requestCode && Activity.RESULT_OK == resultCode) {
+            requestCode && Activity.RESULT_OK == resultCode
+        ) {
 //            view.showSuccessfullySavedMessage()
         }
     }
 
 
     override fun addNewMemo() {
-        view.showAddMemo()
+        view?.showAddMemo()
     }
 
 }

@@ -2,8 +2,6 @@ package com.example.memo_line.ui.addeditmemo
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ClipData
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,7 +10,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
@@ -21,16 +18,12 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
-import com.example.memo_line.di.AppComponent
-import com.example.memo_line.di.DaggerFragmentComponent
-import com.example.memo_line.di.module.FragmentModule
-import com.example.memo_line.di.module.RepositoryMoudle
 import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.util.showSnackBar
+import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.DaggerApplication
-import kotlinx.android.synthetic.main.fragment_add_edit_memo.*
+import dagger.android.support.DaggerFragment
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -38,14 +31,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
+@ActivityScoped
+class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     AddEditMemoAdapter.onItemClickListener {
 
     companion object {
         const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
         const val PICK_GALLERY_ID = 1
         const val PICK_CAMERA_ID = 2
-
 
         fun newInstance(memoId: String?) =
             AddEditMemoFragment().apply {
@@ -66,16 +59,9 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
     private val picItem = ArrayList<Uri>()
     private lateinit var picAdapter: AddEditMemoAdapter
 
-
     @Inject
     lateinit var presenter: AddEditMemoContract.Presenter
     private lateinit var rootView: View
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        injectDependency()
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -319,14 +305,12 @@ class AddEditMemoFragment : Fragment(), AddEditMemoContract.View,
         }
     }
 
-    private fun injectDependency() {
-        val addEditMemoFragment =
-            DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
-        addEditMemoFragment.inject(this)
-    }
+//    private fun injectDependency() {
+//        val addEditMemoFragment =
+//            DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
+//        addEditMemoFragment.inject(this)
+//    }
 
-    private fun injectDependenc2y() {
-    }
 
 
 }

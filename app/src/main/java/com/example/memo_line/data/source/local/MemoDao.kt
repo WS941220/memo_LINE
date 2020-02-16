@@ -6,11 +6,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.memo_line.data.Memo
+import java.util.ArrayList
 
 @Dao
 interface MemoDao {
 
-    @Query("SELECT * FROM memos") fun getMemos(): LiveData<ArrayList<Memo>>
+    @Query("SELECT * FROM Memos") fun getMemos(): List<Memo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertMemo(memo: Memo)
 

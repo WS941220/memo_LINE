@@ -30,7 +30,7 @@ task clean(type: Delete) {
 ext {
     rxjava2_version = '2.1.8'
     rxandroid_version = '2.0.1'
-    dagger2_version = '2.15'
+    dagger2_version = '2.21'
 
     appCompatVersion = '1.0.2'
     androidXAnnotations = '1.0.1'

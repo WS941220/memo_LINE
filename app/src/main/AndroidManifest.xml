@@ -3,6 +3,7 @@
     package="com.example.memo_line">
 
     <application
+        android:name="com.example.memo_line.base.BaseApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Base.AppTheme">
         <activity android:name=".ui.addeditmemo.AddEditMemoActivity"></activity>
-        <activity android:name=".ui.maindetail.MainDetailActivity" />
+
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -14,22 +14,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
-import com.example.memo_line.di.DaggerFragmentComponent
-import com.example.memo_line.di.module.FragmentModule
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
+import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListener {
+@ActivityScoped
+class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener {
+
     companion object {
         fun newInstance(): MainFragment {
             return MainFragment()
         }
     }
-
     @Inject
     lateinit var presenter: MainContract.Presenter
+
     private lateinit var rootView: View
 
     private lateinit var mainRecycler: RecyclerView
@@ -37,16 +39,10 @@ class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListe
     private val mainItem = ArrayList<Memo>()
     private lateinit var mainAdapter: MainAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        injectDependency()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attach(this)
         presenter.subscribe()
-//        initView()
     }
 
     override fun onDestroyView() {
@@ -54,7 +50,11 @@ class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListe
         presenter.unsubscribe()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         rootView = inflater.inflate(R.layout.fragment_main, container, false)
         mainAdapter = MainAdapter(context, mainItem, this)
         presenter.loadMemos()
@@ -80,7 +80,7 @@ class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListe
     }
 
 
-    override fun showMemos(memos: ArrayList<Memo>) {
+    override fun showMemos(memos: List<Memo>) {
         mainAdapter.memos = memos
     }
 
@@ -90,13 +90,13 @@ class MainFragment : Fragment(), MainContract.View, MainAdapter.onItemClickListe
         startActivityForResult(intent, AddEditMemoActivity.REQUEST_ADD_MEMO)
     }
 
-    /**
-     * fragment 의존성 주입
-     */
-    private fun injectDependency() {
-        val mainComponent =
-            DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
-        mainComponent.inject(this)
-    }
+//    /**
+//     * fragment 의존성 주입
+//     */
+//    private fun injectDependency() {
+//        val mainComponent =
+//            DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
+//        mainComponent.inject(this)
+//    }
 
 }

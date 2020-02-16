@@ -1,7 +1,14 @@
 package com.example.memo_line.di.Scoped
 
-import javax.inject.Qualifier
+import javax.inject.Scope
 
-@Qualifier
-@kotlin.annotation.Target
-@Retention annotation class FragmentScoped
+@Scope
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@Target(
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+annotation class FragmentScoped

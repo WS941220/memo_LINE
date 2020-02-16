@@ -1,30 +1,16 @@
 package com.example.memo_line.di.module
 
-import com.example.memo_line.ui.main.AddEditMemoContract
-import com.example.memo_line.ui.main.AddEditMemoPresenter
-import com.example.memo_line.ui.main.MainContract
-import com.example.memo_line.ui.main.MainPresenter
-import com.example.memo_line.ui.maindetail.MainDetailContract
-import com.example.memo_line.ui.maindetail.MainDetailPresenter
+import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
+import com.example.memo_line.ui.main.MainFragment
 import dagger.Module
-import dagger.Provides
+import dagger.android.ContributesAndroidInjector
 
 @Module
-class FragmentModule {
+abstract class FragmentModule {
 
-    @Provides
-    fun provideMainPresenter() : MainContract.Presenter {
-        return MainPresenter()
-    }
+    @ContributesAndroidInjector
+    abstract fun contributeMainFragment(): MainFragment
 
-    @Provides
-    fun provideAddEditMemoPresenter(): AddEditMemoContract.Presenter {
-        return AddEditMemoPresenter()
-    }
-
-    @Provides
-    fun provideMainDetailPresenter(): MainDetailContract.Presenter {
-        return MainDetailPresenter()
-    }
-
+    @ContributesAndroidInjector
+    abstract fun contributeAddEditMemoFragment(): AddEditMemoFragment
 }

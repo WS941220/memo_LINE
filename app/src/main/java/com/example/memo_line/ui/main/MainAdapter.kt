@@ -13,7 +13,7 @@ import com.example.memo_line.R
 import com.example.memo_line.data.Memo
 import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
 
-class MainAdapter(private val context: Context?, var memos: ArrayList<Memo>,
+class MainAdapter(private val context: Context?, var memos: List<Memo>,
                   fragment: Fragment
 ): RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
