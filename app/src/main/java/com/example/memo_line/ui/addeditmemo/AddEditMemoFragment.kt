@@ -61,7 +61,31 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     @Inject
     lateinit var presenter: AddEditMemoContract.Presenter
+
     private lateinit var rootView: View
+
+//    override fun onResume() {
+//        super.onResume()
+//        //Bind view to the presenter which will signal for the presenter to load the task.
+//        presenter.start(this)
+//    }
+//
+//    override fun onPause() {
+//        presenter.dropView()
+//        super.onPause()
+//    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.attach(this)
+        presenter.subscribe()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.unsubscribe()
+    }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -94,11 +118,6 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         return rootView
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.attach(this)
-        presenter.subscribe()
-    }
 
     /**
      * 요청 응답
@@ -240,11 +259,6 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
             }
         }
 
-//        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-//            takePictureIntent.resolveActivity(context!!.packageManager)?.also {
-//                startActivityForResult(takePictureIntent, PICK_CAMERA_ID)
-//            }
-//        }
     }
 
 
@@ -292,25 +306,11 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 //        }
 //    }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        presenter.unsubscribe()
-    }
-
     override fun showMemosList() {
         activity?.apply {
             setResult(Activity.RESULT_OK)
             finish()
         }
     }
-
-//    private fun injectDependency() {
-//        val addEditMemoFragment =
-//            DaggerFragmentComponent.builder().fragmentModule(FragmentModule()).build()
-//        addEditMemoFragment.inject(this)
-//    }
-
-
 
 }

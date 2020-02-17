@@ -1,4 +1,5 @@
 package com.example.memo_line.ui.main
+
 import android.app.Activity
 import android.content.Intent
 import com.example.memo_line.base.BasePresenter
@@ -10,11 +11,12 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AddEditMemoPresenter @Inject constructor( private val disposables: CompositeDisposable) : BasePresenter<AddEditMemoContract.View?>(), AddEditMemoContract.Presenter {
+class AddEditMemoPresenter @Inject  constructor(
+    private val disposables: CompositeDisposable,
+    private val memosRepository: MemosRepository
+) : BasePresenter<AddEditMemoContract.View?>(), AddEditMemoContract.Presenter {
 
     private val memoId: String? = null
-    private val memosDatSource: MemosDataSource? = null
-
 
     override fun subscribe() {
 
@@ -28,14 +30,15 @@ class AddEditMemoPresenter @Inject constructor( private val disposables: Composi
         this.view = view
     }
 
+
     override fun showMessage(msg: String) {
         view?.showMessage(msg)
     }
 
     override fun result(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(Activity.RESULT_OK == resultCode) {
-            when(requestCode) {
-                AddEditMemoFragment.PICK_GALLERY_ID ->{
+        if (Activity.RESULT_OK == resultCode) {
+            when (requestCode) {
+                AddEditMemoFragment.PICK_GALLERY_ID -> {
                     view?.showSuccessGallery(data)
                 }
                 AddEditMemoFragment.PICK_CAMERA_ID -> {
@@ -70,7 +73,7 @@ class AddEditMemoPresenter @Inject constructor( private val disposables: Composi
         if (newMemo.isEmpty) {
 //            view.showEmptyTaskError()
         } else {
-            memosDatSource?.insertMemo(newMemo)
+            memosRepository.insertMemo(newMemo)
             view?.showMemosList()
         }
     }

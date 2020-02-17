@@ -5,13 +5,16 @@ import com.example.memo_line.data.Memo
 interface MemosDataSource {
 
     interface LoadMemosCallback {
-        fun onMemoLoaded(memo: List<Memo>)
+        fun onMemosLoaded(memos: List<Memo>)
         fun onDataNotAvailable()
     }
 
     fun getMemos(callback: LoadMemosCallback)
 
     fun insertMemo(memo: Memo)
+
+    fun refreshMemos()
+
 //
 //    fun completeTask(task: Task)
 //
@@ -22,8 +25,6 @@ interface MemosDataSource {
 //    fun activateTask(taskId: String)
 //
 //    fun clearCompletedTasks()
-//
-//    fun refreshTasks()
 //
 //    fun deleteAllTasks()
 //

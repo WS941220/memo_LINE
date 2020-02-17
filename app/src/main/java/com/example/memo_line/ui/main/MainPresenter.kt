@@ -13,9 +13,10 @@ import javax.inject.Inject
 
 @ActivityScoped
 class MainPresenter @Inject constructor(
-    private val disposables: CompositeDisposable,
-    private val memosRepository: MemosRepository
+    val disposables: CompositeDisposable,
+    val memosRepository: MemosRepository
 ) : BasePresenter<MainContract.View?>(), MainContract.Presenter {
+
 
     private var firstLoad = true
 
@@ -30,21 +31,35 @@ class MainPresenter @Inject constructor(
 
     override fun attach(view: MainContract.View) {
         this.view = view
+        loadMemos(false)
+    }
+
+    override fun loadMemos(forceUpdate: Boolean) {
+        // Simplification for sample: a network reload will be forced on first load.
+        loadMemos(forceUpdate || firstLoad, true)
+        firstLoad = false
     }
 
 
-    override fun loadMemos() {
-//        if (showLoadingUI) {
-////            view.setLoadingIndicator(true)
-//        }
-//        if (forceUpdate) {
-//            respository.refreshTasks()
-//        }
+    private fun loadMemos(forceUpdate: Boolean, showLoadingUI: Boolean) {
+        if (showLoadingUI) {
+            if (view != null) {
+                view?.setLoadingIndicator(true)
+            }
+        }
+        if (forceUpdate) {
+            memosRepository.refreshMemos()
+        }
+
         memosRepository.getMemos(object : MemosDataSource.LoadMemosCallback {
-            override fun onMemoLoaded(memos: List<Memo>) {
+            override fun onMemosLoaded(memos: List<Memo>) {
                 val memosToShow = ArrayList<Memo>()
                 for (memo in memos) {
                     memosToShow.add(memo)
+                }
+
+                if (showLoadingUI) {
+                    view?.setLoadingIndicator(false)
                 }
                 processMemos(memosToShow)
             }
@@ -52,6 +67,10 @@ class MainPresenter @Inject constructor(
             override fun onDataNotAvailable() {
             }
         })
+
+        if (showLoadingUI) {
+            view?.setLoadingIndicator(false)
+        }
     }
 
     private fun processMemos(memos: List<Memo>) {
@@ -80,5 +99,6 @@ class MainPresenter @Inject constructor(
     override fun addNewMemo() {
         view?.showAddMemo()
     }
+
 
 }

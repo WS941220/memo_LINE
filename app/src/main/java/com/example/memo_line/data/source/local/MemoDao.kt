@@ -11,7 +11,7 @@ import java.util.ArrayList
 @Dao
 interface MemoDao {
 
-    @Query("SELECT * FROM Memos") fun getMemos(): List<Memo>
+    @Query("SELECT * FROM memo") fun getMemos(): List<Memo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertMemo(memo: Memo)
 

@@ -2,6 +2,7 @@ package com.example.memo_line.ui.main
 
 import android.content.Intent
 import com.example.memo_line.base.BaseContract
+import com.example.memo_line.base.BasePresenter
 import com.example.memo_line.base.BaseView
 
 

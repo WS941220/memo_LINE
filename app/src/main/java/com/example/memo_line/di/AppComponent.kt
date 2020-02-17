@@ -15,7 +15,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 @AppScoped
 @Component(modules = [(MemosRepositoryMoudle::class), (ApplicationModule::class), (ActivityModule::class), (AndroidSupportInjectionModule::class)])
 interface AppComponent : AndroidInjector<BaseApp> {
-    fun getMemosRepository(): MemosRepository
+
 
     @Component.Builder
     interface Builder {
