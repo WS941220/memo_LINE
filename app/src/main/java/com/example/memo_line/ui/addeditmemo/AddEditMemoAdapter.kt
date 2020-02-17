@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.memo_line.R
 import java.io.File
 
@@ -29,7 +30,7 @@ class AddEditMemoAdapter(private val context: Context?, var pics: ArrayList<Uri>
     override fun onBindViewHolder(holder: AddEditMemoViewHolder, position: Int){
 
         var image = pics[position]
-        holder.pic!!.setImageURI(image)
+        Glide.with(this.context!!).load(image).centerCrop().into(holder.pic!!)
 
         holder.picRemove!!.setOnClickListener {
             listener.itemRemove(position)

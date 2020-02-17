@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.memo_line.R
 import com.example.memo_line.data.Memo
 import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
@@ -26,7 +27,12 @@ class MainAdapter(private val context: Context?, var memos: List<Memo>,
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         var title = memos[position].title
-        holder.title!!.setText(title)
+        var content = memos[position].content
+        var image = memos[position].image.get(0)
+
+        holder.title.setText(title)
+        holder.content.setText(content)
+        Glide.with(this.context!!).load(image).centerCrop().into(holder.image)
     }
 
     override fun getItemCount(): Int = memos.size
@@ -42,6 +48,8 @@ class MainAdapter(private val context: Context?, var memos: List<Memo>,
 
     class MainViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val title = itemView.findViewById<TextView>(R.id.title)
+        val content = itemView.findViewById<TextView>(R.id.content)
+        val image = itemView.findViewById<ImageView>(R.id.image)
 
     }
 

@@ -111,6 +111,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
 
     override fun showMemos(memos: List<Memo>) {
         mainAdapter.memos = memos
+        mainAdapter.notifyDataSetChanged()
     }
 
 

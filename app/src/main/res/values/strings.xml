@@ -12,10 +12,7 @@
     <string name="title_hint">제목</string>
     <string name="content_hint">내용</string>
 
-    fail_over_gallery
-
-    <string name="fail_multi_gallery">다중 선택에 실패했습니다.</string>
-    <string name="fail_over_gallery">사진은 9장까지 선택 가능합니다.</string>
+    <string name="fail_multi_gallery">사진 선택에 실패했습니다.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

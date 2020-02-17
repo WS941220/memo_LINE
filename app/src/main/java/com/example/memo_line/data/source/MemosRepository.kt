@@ -57,7 +57,7 @@ class MemosRepository @Inject constructor(
     }
 
     private inline fun cacheAndPerform(task: Memo, perform: (Memo) -> Unit) {
-        val cachedTask = Memo(task.title, task.content, task.id).apply {
+        val cachedTask = Memo(task.title, task.content, task.image, task.id).apply {
             isCompleted = task.isCompleted
         }
         cachedMemos.put(cachedTask.id, cachedTask)

@@ -2,6 +2,7 @@ package com.example.memo_line.ui.main
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import com.example.memo_line.base.BasePresenter
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
@@ -51,9 +52,9 @@ class AddEditMemoPresenter @Inject  constructor(
     /**
      * 메모 저장
      */
-    override fun saveMemo(title: String, content: String) {
+    override fun saveMemo(title: String, content: String, image: List<String>) {
         if (memoId == null) {
-            createMemo(title, content)
+            createMemo(title, content, image)
         }
 //        else {
 //            updateTask(title, description)
@@ -68,8 +69,8 @@ class AddEditMemoPresenter @Inject  constructor(
         view?.showCamera()
     }
 
-    private fun createMemo(title: String, content: String) {
-        val newMemo = Memo(title, content)
+    private fun createMemo(title: String, content: String, image: List<String>) {
+        val newMemo = Memo(title, content, image)
         if (newMemo.isEmpty) {
 //            view.showEmptyTaskError()
         } else {

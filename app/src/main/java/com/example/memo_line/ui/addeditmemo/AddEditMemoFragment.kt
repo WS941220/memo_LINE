@@ -57,6 +57,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     private lateinit var photoURI: Uri
 
     private val picItem = ArrayList<Uri>()
+    private val picItem2 = ArrayList<String>()
     private lateinit var picAdapter: AddEditMemoAdapter
 
     @Inject
@@ -92,7 +93,10 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)?.apply {
             setImageResource(R.drawable.ic_done)
             setOnClickListener {
-                presenter.saveMemo(title.text.toString(), content.text.toString())
+                for(i in 0..picItem.size - 1) {
+                    picItem2.add(picItem.get(i).toString())
+                }
+                presenter.saveMemo(title.text.toString(), content.text.toString(), picItem2)
             }
         }
     }
