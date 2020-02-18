@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,12 +17,13 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.shared_toolbar.*
 import javax.inject.Inject
 import kotlin.math.acos
 
 @ActivityScoped
-class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener,
-    MainActivity.onBackPressedListener {
+class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener {
+
 
     companion object {
         fun newInstance(): MainFragment {
@@ -80,7 +83,11 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
                 setOnRefreshListener { presenter.loadMemos(false) }
             }
         }
-        mainRecycler.layoutManager = LinearLayoutManager(context)
+        val mLayoutManager = LinearLayoutManager(context)
+        mLayoutManager.reverseLayout  = true
+        mLayoutManager.stackFromEnd  = true
+
+        mainRecycler.layoutManager = mLayoutManager
         mainRecycler.adapter = mainAdapter
 
         setHasOptionsMenu(true)
@@ -92,7 +99,11 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
      * 메뉴 inflate
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_fragment_menu, menu)
+        if(isDelete == false) {
+            inflater.inflate(R.menu.toolbar_fragment_menu, menu)
+        } else {
+            inflater.inflate(R.menu.delete_done_menu , menu)
+        }
     }
 
     /**
@@ -101,6 +112,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.edit -> showCheckBox()
+            R.id.menu_success -> showMain()
         }
         return true
     }
@@ -110,7 +122,46 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
      */
     private fun showCheckBox() {
         isDelete = true
+        requireActivity().invalidateOptionsMenu();
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.delete)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
+            setImageResource(R.drawable.ic_delete)
+            setOnClickListener { deleteMemos() }
+        }
         mainAdapter.visible = View.VISIBLE
+        mainAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * 메인으로
+     */
+    private fun showMain() {
+        isDelete = false
+        requireActivity().invalidateOptionsMenu();
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.title)
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
+            setImageResource(R.drawable.ic_create)
+            setOnClickListener { presenter.addNewMemo()}
+        }
+        mainAdapter.visible = View.GONE
+        mainAdapter.notifyDataSetChanged()
+
+    }
+
+    /**
+     * 메모삭제
+     */
+    private fun deleteMemos() {
+        val memoList = ArrayList<Memo>()
+        for(i in 0..mainAdapter.memos.size - 1) {
+            if(!mainAdapter.memos[i].isCompleted) {
+                memoList.add(mainAdapter.memos[i])
+            } else {
+                mainAdapter.memos[i].isCompleted = false
+            }
+        }
+        mainAdapter.memos = memoList
         mainAdapter.notifyDataSetChanged()
     }
 
@@ -125,7 +176,9 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
         mainAdapter.notifyDataSetChanged()
     }
 
-
+    /**
+     * 메모 작성
+     */
     override fun showAddMemo() {
         val intent = Intent(context, AddEditMemoActivity::class.java)
         startActivityForResult(intent, AddEditMemoActivity.REQUEST_ADD_MEMO)
@@ -139,20 +192,5 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val activity: MainActivity = MainActivity()
-        activity.setOnBackPressedListener(this)
-    }
-
-    override fun onBack() {
-        if(isDelete == true) {
-            mainAdapter.visible = View.GONE
-            mainAdapter.notifyDataSetChanged()
-        } else {
-            val activity: MainActivity = MainActivity()
-            activity.setOnBackPressedListener(null)
-        }
-    }
 
 }

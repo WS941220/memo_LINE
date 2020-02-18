@@ -22,8 +22,6 @@ data class Memo @JvmOverloads constructor(
     val titleForList: String
         get() = if (title.isNotEmpty()) title else content
 
-    val isActive
-        get() = !isCompleted
 
     val isEmpty
         get() = title.isEmpty() && content.isEmpty()

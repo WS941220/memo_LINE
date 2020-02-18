@@ -181,9 +181,8 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     @SuppressLint("IntentReset")
     override fun showGallery() {
         val intent = Intent(Intent.ACTION_PICK)
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         startActivityForResult(intent, PICK_GALLERY_ID)
     }
 
@@ -193,16 +192,17 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     override fun showSuccessGallery(data: Intent?) {
         val clipData = data?.clipData
         if (data == null) {
+            presenter.showMessage(getString(R.string.fail_multi_gallery))
         } else {
             if (clipData == null) {
-                presenter.showMessage(getString(R.string.fail_multi_gallery))
+                picItem.add(data.data!!)
             } else {
                 for (i in 0..clipData.itemCount - 1) {
                     val imagePath = clipData.getItemAt(i).uri
                     picItem.add(imagePath)
                 }
-                picAdapter.notifyDataSetChanged()
             }
+            picAdapter.notifyDataSetChanged()
         }
     }
 
@@ -301,15 +301,6 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         picAdapter.notifyDataSetChanged()
     }
 
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == PICK_GALLERY_ID) {
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                openCamera()
-//            } else {
-//            }
-//        }
-//    }
 
     override fun showMemosList() {
         activity?.apply {

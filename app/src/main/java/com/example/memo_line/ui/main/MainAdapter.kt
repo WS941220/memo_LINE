@@ -10,10 +10,8 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -27,8 +25,6 @@ class MainAdapter(
     private val context: Context?, var memos: List<Memo>, var visible: Int,
     fragment: Fragment
 ) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
-
-
 
     private val listener: onItemClickListener
 
@@ -48,6 +44,17 @@ class MainAdapter(
         Glide.with(this.context!!).load(image).centerCrop().into(holder.pic)
 
         holder.check.visibility = visible
+
+        if(visible == View.VISIBLE) {
+            holder.check.isChecked = false
+            holder.mainCard.setOnClickListener(View.OnClickListener { v ->
+                holder.check.isChecked = !holder.check.isChecked
+            })
+            holder.check.setOnCheckedChangeListener { v, isChecked ->
+                memos[position].isCompleted = holder.check.isChecked
+            }
+        }
+
     }
 
     override fun getItemCount(): Int = memos.size
@@ -57,11 +64,13 @@ class MainAdapter(
         viewType: Int
     ): MainAdapter.MainViewHolder {
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_main, parent, false)
-
         return MainViewHolder(itemView)
     }
 
+
+
     class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val mainCard = itemView.findViewById<CardView>(R.id.mainCard)
         val title = itemView.findViewById<TextView>(R.id.title)
         val content = itemView.findViewById<TextView>(R.id.content)
         val pic = itemView.findViewById<ImageView>(R.id.pic)

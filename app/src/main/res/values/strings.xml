@@ -2,9 +2,11 @@
     <string name="app_name">memo_LINE</string>
     <string name="title">모든 메모</string>
     <string name="add_memo">글 작성</string>
+    <string name="delete">메모 삭제</string>
     <string name="edit">편집</string>
 
     <string name="menu_attach">Attach</string>
+    <string name="success">완료</string>
 
     <string name="menu_camera">카메라</string>
     <string name="menu_gallery">갤러리</string>

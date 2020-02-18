@@ -14,8 +14,6 @@ import dagger.android.support.DaggerAppCompatActivity
 
 class MainActivity : DaggerAppCompatActivity() {
 
-    private lateinit var monBackPressedListener: onBackPressedListener
-
     private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,23 +67,6 @@ class MainActivity : DaggerAppCompatActivity() {
             true
         }
     }
-
-    interface onBackPressedListener {
-        fun onBack();
-    }
-
-    fun setOnBackPressedListener(listener: onBackPressedListener?) {
-        monBackPressedListener = listener!!
-    }
-
-    override fun onBackPressed() {
-        if (monBackPressedListener != null) {
-            monBackPressedListener.onBack();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
 
 }
 
