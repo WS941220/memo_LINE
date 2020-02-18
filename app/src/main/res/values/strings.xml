@@ -6,7 +6,7 @@
 
     <string name="menu_attach">Attach</string>
 
-    <string name="menu_camera">사진</string>
+    <string name="menu_camera">카메라</string>
     <string name="menu_gallery">갤러리</string>
 
     <string name="title_hint">제목</string>

@@ -30,7 +30,7 @@ class AddEditMemoAdapter(private val context: Context?, var pics: ArrayList<Uri>
     override fun onBindViewHolder(holder: AddEditMemoViewHolder, position: Int){
 
         var image = pics[position]
-        Glide.with(this.context!!).load(image).centerCrop().into(holder.pic!!)
+        Glide.with(this.context!!).load(image).centerCrop().into(holder.pic)
 
         holder.picRemove!!.setOnClickListener {
             listener.itemRemove(position)

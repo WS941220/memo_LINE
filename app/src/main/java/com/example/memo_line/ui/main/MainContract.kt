@@ -8,7 +8,7 @@ import com.example.memo_line.data.Memo
 
 interface MainContract {
     interface View: BaseContract.View {
-        var isActive: Boolean
+        var isDelete: Boolean
 
         fun setLoadingIndicator(active: Boolean)
 

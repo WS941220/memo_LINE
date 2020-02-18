@@ -14,14 +14,13 @@ import dagger.android.support.DaggerAppCompatActivity
 
 class MainActivity : DaggerAppCompatActivity() {
 
-
+    private lateinit var monBackPressedListener: onBackPressedListener
 
     private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        injectDependency()
 
         /**
          * 툴바
@@ -71,13 +70,22 @@ class MainActivity : DaggerAppCompatActivity() {
         }
     }
 
-    /**
-     * Dagger 의존성 주입
-     */
-//    private fun injectDependency() {
-//        DaggerAppComponent.builder()
-//            .applicationModule(ApplicationModule(application))
-//            .repositoryMoudle(RepositoryMoudle(application)).build().inject(this)
-//    }
+    interface onBackPressedListener {
+        fun onBack();
+    }
+
+    fun setOnBackPressedListener(listener: onBackPressedListener?) {
+        monBackPressedListener = listener!!
+    }
+
+    override fun onBackPressed() {
+        if (monBackPressedListener != null) {
+            monBackPressedListener.onBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
 }
 

@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Base.AppTheme">
         <activity android:name=".ui.addeditmemo.AddEditMemoActivity"></activity>
-
+        <activity android:name=".ui.maindetail.MainDetailActivity"></activity>
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

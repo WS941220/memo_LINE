@@ -15,6 +15,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
@@ -316,5 +317,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
             finish()
         }
     }
+
+
 
 }

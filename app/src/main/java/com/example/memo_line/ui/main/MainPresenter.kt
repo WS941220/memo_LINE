@@ -17,7 +17,6 @@ class MainPresenter @Inject constructor(
     val memosRepository: MemosRepository
 ) : BasePresenter<MainContract.View?>(), MainContract.Presenter {
 
-
     private var firstLoad = true
 
     override fun subscribe() {

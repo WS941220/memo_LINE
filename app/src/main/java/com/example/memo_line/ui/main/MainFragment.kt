@@ -1,11 +1,10 @@
 package com.example.memo_line.ui.main
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +16,11 @@ import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
+import kotlin.math.acos
 
 @ActivityScoped
-class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener {
+class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener,
+    MainActivity.onBackPressedListener {
 
     companion object {
         fun newInstance(): MainFragment {
@@ -29,8 +30,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
     @Inject
     lateinit var presenter: MainContract.Presenter
 
-    override var isActive: Boolean = false
-        get() = isAdded
+    override var isDelete: Boolean = false
 
     private lateinit var rootView: View
 
@@ -41,23 +41,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainAdapter = MainAdapter(context, mainItem, this)
-    }
-
-//    override fun onResume() {
-//        super.onResume()
-//        presenter.start(this)
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        presenter.dropView()
-//    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.attach(this)
-        presenter.subscribe()
+        mainAdapter = MainAdapter(context, mainItem, View.GONE,this)
     }
 
     override fun onResume() {
@@ -104,6 +88,33 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
         return rootView
     }
 
+    /**
+     * 메뉴 inflate
+     */
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_fragment_menu, menu)
+    }
+
+    /**
+     * 툴바 메뉴 선택
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.edit -> showCheckBox()
+        }
+        return true
+    }
+
+    /**
+     * 편집 클릭 체크박스 활성화
+     */
+    private fun showCheckBox() {
+        isDelete = true
+        mainAdapter.visible = View.VISIBLE
+        mainAdapter.notifyDataSetChanged()
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         presenter.result(requestCode, resultCode)
     }
@@ -125,6 +136,22 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
         with(root.findViewById<SwipeRefreshLayout>(R.id.refresh_layout)) {
             // Make sure setRefreshing() is called after the layout is done with everything else.
             post { isRefreshing = active }
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val activity: MainActivity = MainActivity()
+        activity.setOnBackPressedListener(this)
+    }
+
+    override fun onBack() {
+        if(isDelete == true) {
+            mainAdapter.visible = View.GONE
+            mainAdapter.notifyDataSetChanged()
+        } else {
+            val activity: MainActivity = MainActivity()
+            activity.setOnBackPressedListener(null)
         }
     }
 

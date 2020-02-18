@@ -26,7 +26,6 @@ class MemosRepository @Inject constructor(
             val runnable = Runnable {
                 val memos: List<Memo> = memoDao.getMemos()
                 executors.mainThread.execute(Runnable {
-                    refreshCache(memos)
                     callback.onMemosLoaded(memos)
                 })
             }

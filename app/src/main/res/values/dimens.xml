@@ -9,6 +9,6 @@
     <dimen name="card_margin_top">10dp</dimen>
     <dimen name="card_margin_side">5dp</dimen>
 
-    <dimen name="back_raius">30dp</dimen>
+    <dimen name="back_raius">40dp</dimen>
 
 </resources>
