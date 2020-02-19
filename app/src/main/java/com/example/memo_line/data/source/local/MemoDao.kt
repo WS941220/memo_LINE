@@ -13,6 +13,8 @@ interface MemoDao {
 
     @Query("SELECT * FROM memo") fun getMemos(): List<Memo>
 
+    @Query("SELECT * FROM memo WHERE entryid = :memoId") fun getMemoById(memoId: String): Memo?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertMemo(memo: Memo)
 
 }

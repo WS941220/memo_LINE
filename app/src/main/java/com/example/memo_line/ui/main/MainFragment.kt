@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.memo_line.R
 import com.example.memo_line.data.Memo
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
+import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.DaggerFragment
@@ -22,7 +23,7 @@ import javax.inject.Inject
 import kotlin.math.acos
 
 @ActivityScoped
-class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClickListener {
+class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemListener {
 
 
     companion object {
@@ -123,7 +124,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
     private fun showCheckBox() {
         isDelete = true
         requireActivity().invalidateOptionsMenu();
-        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.delete)
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.delete_memo)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
             setImageResource(R.drawable.ic_delete)
@@ -158,6 +159,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
             if(!mainAdapter.memos[i].isCompleted) {
                 memoList.add(mainAdapter.memos[i])
             } else {
+                presenter.deleteMemo()
                 mainAdapter.memos[i].isCompleted = false
             }
         }
@@ -192,5 +194,15 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.onItemClic
         }
     }
 
+    override fun onMemClick(clickMemo: Memo) {
+        presenter.openMemo(clickMemo)
+    }
+
+    override fun showOpenMemo(memoId: String) {
+        val intent = Intent(context, AddEditMemoActivity::class.java).apply {
+            putExtra(AddEditMemoFragment.ARGUMENT_SHOW_MEMO_ID, memoId)
+        }
+        startActivity(intent)
+    }
 
 }

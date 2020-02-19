@@ -9,6 +9,20 @@ import com.example.memo_line.base.BaseView
 
 interface AddEditMemoContract {
     interface View: BaseContract.View {
+        var isShow: Boolean
+
+        var isEdit: Boolean
+
+        fun setTitle(title: String)
+
+        fun onShow()
+
+        fun onEdit()
+
+        fun setContent(content: String)
+
+        fun setImages(images: List<String>)
+
         fun showMessage(msg: String)
 
         fun showMemosList()
@@ -25,6 +39,8 @@ interface AddEditMemoContract {
     }
 
     interface Presenter : BaseContract.Presenter<View> {
+        fun showMemo()
+
         fun showMessage(msg: String)
 
         fun result(requestCode: Int, resultCode: Int, data: Intent?)

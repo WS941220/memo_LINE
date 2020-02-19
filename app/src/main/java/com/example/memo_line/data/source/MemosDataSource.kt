@@ -9,11 +9,17 @@ interface MemosDataSource {
         fun onDataNotAvailable()
     }
 
+    interface GetMemoCallback {
+        fun onMemoLoaded(memo: Memo)
+    }
+
     fun getMemos(callback: LoadMemosCallback)
 
     fun insertMemo(memo: Memo)
 
     fun refreshMemos()
+
+    fun getMemo(memoId: String, callback: GetMemoCallback)
 
 //
 //    fun completeTask(task: Task)

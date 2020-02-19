@@ -11,6 +11,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import androidx.core.net.toFile
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.memo_line.R
+import com.example.memo_line.ui.FullScreenImgActivity
 import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.util.showSnackBar
 import com.example.practice_test.di.Scoped.ActivityScoped
@@ -37,6 +39,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     AddEditMemoAdapter.onItemClickListener {
 
     companion object {
+        const val ARGUMENT_SHOW_MEMO_ID = "SHOW_MEMO_ID"
         const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
         const val PICK_GALLERY_ID = 1
         const val PICK_CAMERA_ID = 2
@@ -44,11 +47,13 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         fun newInstance(memoId: String?) =
             AddEditMemoFragment().apply {
                 arguments = Bundle().apply {
-                    putString(AddEditMemoFragment.ARGUMENT_EDIT_MEMO_ID, memoId)
+                    putString(AddEditMemoFragment.ARGUMENT_SHOW_MEMO_ID, memoId)
                 }
             }
     }
 
+    override var isShow: Boolean = false
+    override var isEdit: Boolean = false
 
     private lateinit var title: TextView
     private lateinit var content: TextView
@@ -57,8 +62,8 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     private var currentPhotoPath = ""
     private lateinit var photoURI: Uri
 
-    private val picItem = ArrayList<Uri>()
-    private val picItem2 = ArrayList<String>()
+    private val picItem = ArrayList<Uri>(0)
+    private val picItem2 = ArrayList<String>(0)
     private lateinit var picAdapter: AddEditMemoAdapter
 
     @Inject
@@ -66,35 +71,24 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     private lateinit var rootView: View
 
-//    override fun onResume() {
-//        super.onResume()
-//        //Bind view to the presenter which will signal for the presenter to load the task.
-//        presenter.start(this)
-//    }
-//
-//    override fun onPause() {
-//        presenter.dropView()
-//        super.onPause()
-//    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        presenter.attach(this)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         presenter.subscribe()
+        presenter.attach(this)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.unsubscribe()
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)?.apply {
             setImageResource(R.drawable.ic_done)
             setOnClickListener {
-                for(i in 0..picItem.size - 1) {
+                for (i in 0..picItem.size - 1) {
                     picItem2.add(picItem.get(i).toString())
                 }
                 presenter.saveMemo(title.text.toString(), content.text.toString(), picItem2)
@@ -118,18 +112,60 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         picRecyler.layoutManager = GridLayoutManager(context, 3)
         picRecyler.adapter = picAdapter
 
+        editFocusListener()
         setHasOptionsMenu(true)
 
         return rootView
     }
 
-
-    /**
-     * 요청 응답
-     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         presenter.result(requestCode, resultCode, data)
     }
+
+
+    override fun setTitle(title: String) {
+        this.title.text = title
+    }
+
+    override fun setContent(content: String) {
+        this.content.text = content
+    }
+
+    override fun setImages(images: List<String>) {
+        for (i in 0..images.size - 1) {
+            if (!images.get(i).equals("")) {
+                picItem.add(Uri.parse(images.get(i)))
+            }
+        }
+        picAdapter.pics = picItem
+        picAdapter.notifyDataSetChanged()
+    }
+
+    override fun onShow() {
+        isShow = true
+        activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)?.visibility =
+            View.GONE
+        requireActivity().invalidateOptionsMenu();
+    }
+
+    override fun onEdit() {
+        isEdit = true
+        requireActivity().invalidateOptionsMenu();
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.edit_memo)
+        val fab = activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)
+        fab?.visibility = View.VISIBLE
+        fab?.apply {
+            setImageResource(R.drawable.ic_done)
+            setOnClickListener {
+                for (i in 0..picItem.size - 1) {
+                    picItem2.add(picItem.get(i).toString())
+                }
+                //
+
+            }
+        }
+    }
+
 
     /**
      * 스낵바 메시지
@@ -142,7 +178,11 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
      * 툴바메뉴 아이템 inflate
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_fragment_menu, menu)
+        if (!isShow) {
+            inflater.inflate(R.menu.add_fragment_menu, menu)
+        } else if(isShow && isEdit) {
+            inflater.inflate(R.menu.add_fragment_menu, menu)
+        }
     }
 
     /**
@@ -150,6 +190,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> activity?.finish()
             R.id.menu_attach -> showFilteringPopUpMenu()
         }
         return true
@@ -176,11 +217,41 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     }
 
     /**
-     * 갤러리 실행
+     * 권한 체크
      */
-    @SuppressLint("IntentReset")
     override fun showGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (context?.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        android.Manifest.permission.CAMERA
+                    )
+                } != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                    context!!,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                activity?.let {
+                    ActivityCompat.requestPermissions(
+                        it,
+                        arrayOf(
+                            android.Manifest.permission.CAMERA,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ), PICK_GALLERY_ID
+                    )
+                }
+            } else {
+                openGallery()
+            }
+        } else {
+            openGallery()
+        }
+
+    }
+
+    @SuppressLint("IntentReset")
+    private fun  openGallery() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         startActivityForResult(intent, PICK_GALLERY_ID)
@@ -253,7 +324,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 }
                 // Continue only if the File was successfully created
                 photoFile?.also {
-                     photoURI = FileProvider.getUriForFile(
+                    photoURI = FileProvider.getUriForFile(
                         context!!,
                         "com.example.memo_line",
                         it
@@ -309,6 +380,24 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         }
     }
 
+    override fun fullImage(image: Uri) {
+        val intent = Intent(this.context, FullScreenImgActivity::class.java)
+        intent.putExtra("uri", image)
+        startActivity(intent)
+    }
+
+    private fun editFocusListener() {
+        title.setOnFocusChangeListener { v, hasFocus ->
+            if (isShow) {
+                onEdit()
+            }
+        }
+        content.setOnFocusChangeListener { v, hasFocus ->
+            if (isShow) {
+                onEdit()
+            }
+        }
+    }
 
 
 }

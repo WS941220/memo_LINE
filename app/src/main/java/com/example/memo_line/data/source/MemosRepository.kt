@@ -3,6 +3,7 @@ package com.example.memo_line.data.source
 import com.example.android.architecture.blueprints.todoapp.util.AppExecutors
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.local.MemoDao
+import com.example.memo_line.data.source.local.MemoDatabase
 import com.example.memo_line.di.Scoped.AppScoped
 import java.util.*
 import javax.inject.Inject
@@ -45,6 +46,17 @@ class MemosRepository @Inject constructor(
 
     override fun refreshMemos() {
         cacheIsDirty = true
+    }
+
+    override fun getMemo(memoId: String, callback: MemosDataSource.GetMemoCallback) {
+        executors.diskIO.execute {
+            val memo = memoDao.getMemoById(memoId)
+            executors.mainThread.execute {
+                if (memo != null) {
+                    callback.onMemoLoaded(memo)
+                }
+            }
+        }
     }
 
     private fun refreshCache(tasks: List<Memo>) {

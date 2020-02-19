@@ -15,12 +15,20 @@ interface MainContract {
         fun showMemos(memos: List<Memo> )
 
         fun showAddMemo()
+
+        fun showOpenMemo(memoId: String)
     }
 
     interface Presenter : BaseContract.Presenter<View> {
         fun loadMemos(forceUpdate: Boolean)
+
         fun result(requestCode: Int, resultCode: Int)
+
         fun addNewMemo()
+
+        fun deleteMemo()
+
+        fun openMemo(clickMemo: Memo)
     }
 }
 

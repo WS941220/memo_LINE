@@ -26,10 +26,10 @@ class MainAdapter(
     fragment: Fragment
 ) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
-    private val listener: onItemClickListener
+    private val listener: MemoItemListener
 
     init {
-        this.listener = fragment as onItemClickListener
+        this.listener = fragment as MemoItemListener
     }
 
 
@@ -47,11 +47,15 @@ class MainAdapter(
 
         if(visible == View.VISIBLE) {
             holder.check.isChecked = false
-            holder.mainCard.setOnClickListener(View.OnClickListener { v ->
+            holder.mainCard.setOnClickListener { v ->
                 holder.check.isChecked = !holder.check.isChecked
-            })
+            }
             holder.check.setOnCheckedChangeListener { v, isChecked ->
                 memos[position].isCompleted = holder.check.isChecked
+            }
+        } else {
+            holder.mainCard.setOnClickListener { v ->
+                listener.onMemClick(memos[position])
             }
         }
 
@@ -78,8 +82,8 @@ class MainAdapter(
 
     }
 
-    interface onItemClickListener {
-
+    interface MemoItemListener {
+        fun onMemClick(clickMemo: Memo)
     }
 
 }

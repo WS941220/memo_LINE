@@ -94,6 +94,13 @@ class MainPresenter @Inject constructor(
         }
     }
 
+    override fun openMemo(requestMemo: Memo) {
+        view?.showOpenMemo(requestMemo.id)
+    }
+
+    override fun deleteMemo() {
+
+    }
 
     override fun addNewMemo() {
         view?.showAddMemo()

@@ -1,10 +1,12 @@
 package com.example.memo_line.ui.addeditmemo
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.example.memo_line.R
 import com.example.memo_line.util.replaceFragmentInActivity
 import com.example.memo_line.util.setupActionBar
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.shared_toolbar.*
 
 
 class AddEditMemoActivity : DaggerAppCompatActivity() {
@@ -16,13 +18,13 @@ class AddEditMemoActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_memo)
-        val memoId = intent.getStringExtra(AddEditMemoFragment.ARGUMENT_EDIT_MEMO_ID)
+        val memoId = intent.getStringExtra(AddEditMemoFragment.ARGUMENT_SHOW_MEMO_ID)
 
         /**
          * 툴바
          */
         setupActionBar(R.id.toolbar) {
-            setTitle(R.string.add_memo)
+            setTitle(if (memoId == null) R.string.add_memo else R.string.nothing)
             setDisplayHomeAsUpEnabled(true);
             setDisplayShowHomeEnabled(true);
         }
@@ -33,9 +35,7 @@ class AddEditMemoActivity : DaggerAppCompatActivity() {
             }
 
     }
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
+
+
 
 }

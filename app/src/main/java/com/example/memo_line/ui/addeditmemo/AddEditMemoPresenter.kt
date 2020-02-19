@@ -13,15 +13,17 @@ import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class AddEditMemoPresenter @Inject  constructor(
+    private val memoId: String?,
     private val disposables: CompositeDisposable,
     private val memosRepository: MemosRepository
-) : BasePresenter<AddEditMemoContract.View?>(), AddEditMemoContract.Presenter {
-
-    private val memoId: String? = null
+) : BasePresenter<AddEditMemoContract.View?>(), AddEditMemoContract.Presenter, MemosDataSource.GetMemoCallback {
 
     override fun subscribe() {
-
+        if (memoId != null) {
+            showMemo()
+        }
     }
+
     override fun unsubscribe() {
         disposables.clear()
         disposables.dispose()
@@ -29,6 +31,20 @@ class AddEditMemoPresenter @Inject  constructor(
 
     override fun attach(view: AddEditMemoContract.View) {
         this.view = view
+    }
+
+    override fun showMemo() {
+        if (memoId == null) {
+            throw RuntimeException("memo is new.")
+        }
+        memosRepository.getMemo(memoId, this)
+    }
+
+    override fun onMemoLoaded(memo: Memo) {
+        view?.setTitle(memo.title)
+        view?.setContent(memo.content)
+        view?.setImages(memo.image)
+        view?.onShow()
     }
 
 

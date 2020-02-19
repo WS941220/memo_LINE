@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.memo_line">
+    <!-- 카메라 퍼미션 -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 인터넷 사용 권한 퍼미션 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.example.memo_line.base.BaseApp"
+        android:name=".base.BaseApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Base.AppTheme">
-        <activity android:name=".ui.addeditmemo.AddEditMemoActivity"></activity>
-        <activity android:name=".ui.maindetail.MainDetailActivity"></activity>
+        <activity android:name=".ui.FullScreenImgActivity"></activity>
+        <activity android:name=".ui.addeditmemo.AddEditMemoActivity" />
+        <activity android:name=".ui.maindetail.MainDetailActivity" />
         <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,25 +32,14 @@
         </activity>
 
         <provider
-            android:authorities="com.example.memo_line"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.memo_line"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
-
-    <!--  카메라 퍼미션-->
-    <uses-feature
-        android:name="android.hardware.camera" android:required="true"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--  인터넷 사용 권한 퍼미션-->
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
