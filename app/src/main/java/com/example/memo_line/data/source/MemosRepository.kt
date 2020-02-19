@@ -44,6 +44,15 @@ class MemosRepository @Inject constructor(
         cachedMemos.put(memo.id, memo)
     }
 
+    override fun deleteMemo(memoId: String) {
+        executors.diskIO.execute { memoDao.deleteMemoById(memoId)}
+        cachedMemos.remove(memoId)
+    }
+
+    override fun deleteMemos(memos: List<String>) {
+        executors.diskIO.execute { memoDao.deleteMemos(memos)}
+    }
+
     override fun refreshMemos() {
         cacheIsDirty = true
     }
@@ -59,20 +68,20 @@ class MemosRepository @Inject constructor(
         }
     }
 
-    private fun refreshCache(tasks: List<Memo>) {
-        cachedMemos.clear()
-        tasks.forEach {
-            cacheAndPerform(it) {}
-        }
-        cacheIsDirty = false
-    }
-
-    private inline fun cacheAndPerform(task: Memo, perform: (Memo) -> Unit) {
-        val cachedTask = Memo(task.title, task.content, task.image, task.id).apply {
-            isCompleted = task.isCompleted
-        }
-        cachedMemos.put(cachedTask.id, cachedTask)
-        perform(cachedTask)
-    }
+//    private fun refreshCache(tasks: List<Memo>) {
+//        cachedMemos.clear()
+//        tasks.forEach {
+//            cacheAndPerform(it) {}
+//        }
+//        cacheIsDirty = false
+//    }
+//
+//    private inline fun cacheAndPerform(task: Memo, perform: (Memo) -> Unit) {
+//        val cachedTask = Memo(task.title, task.content, task.image, task.id).apply {
+//            isCompleted = task.isCompleted
+//        }
+//        cachedMemos.put(cachedTask.id, cachedTask)
+//        perform(cachedTask)
+//    }
 
 }

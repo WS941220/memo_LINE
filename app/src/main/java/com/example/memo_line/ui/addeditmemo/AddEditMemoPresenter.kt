@@ -66,15 +66,15 @@ class AddEditMemoPresenter @Inject  constructor(
     }
 
     /**
-     * 메모 저장
+     * 메모 저장 & 업데이트
      */
     override fun saveMemo(title: String, content: String, image: List<String>) {
         if (memoId == null) {
             createMemo(title, content, image)
         }
-//        else {
-//            updateTask(title, description)
-//        }
+        else {
+            updateMemo(title, content, image)
+        }
     }
 
     override fun callGallery() {
@@ -85,6 +85,9 @@ class AddEditMemoPresenter @Inject  constructor(
         view?.showCamera()
     }
 
+    /**
+     * 메모 저장
+     */
     private fun createMemo(title: String, content: String, image: List<String>) {
         val newMemo = Memo(title, content, image)
         if (newMemo.isEmpty) {
@@ -93,6 +96,17 @@ class AddEditMemoPresenter @Inject  constructor(
             memosRepository.insertMemo(newMemo)
             view?.showMemosList()
         }
+    }
+
+    /**
+     * 메모 업데이트
+     */
+    private fun updateMemo(title: String, content: String, image: List<String>) {
+        if (memoId == null) {
+            throw RuntimeException("memo is new.")
+        }
+        memosRepository.insertMemo(Memo(title, content, image, memoId))
+        view?.showMemosList()
     }
 
 }

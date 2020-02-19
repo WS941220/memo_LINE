@@ -16,13 +16,8 @@ data class Memo @JvmOverloads constructor(
     @ColumnInfo(name = "image") var image: List<String>,
     @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
 ) {
-
-    @ColumnInfo(name = "completed") var isCompleted = false
-
-    val titleForList: String
-        get() = if (title.isNotEmpty()) title else content
-
+    var isCompleted = false
 
     val isEmpty
-        get() = title.isEmpty() && content.isEmpty()
+        get() = title.isEmpty() && content.isEmpty() && image.isEmpty()
 }

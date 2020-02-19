@@ -143,6 +143,10 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     override fun onShow() {
         isShow = true
+        isEdit = false
+        title.clearFocus()
+        content.clearFocus()
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.nothing)
         activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)?.visibility =
             View.GONE
         requireActivity().invalidateOptionsMenu();
@@ -160,8 +164,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 for (i in 0..picItem.size - 1) {
                     picItem2.add(picItem.get(i).toString())
                 }
-                //
-
+                presenter.saveMemo(title.text.toString(), content.text.toString(), picItem2)
             }
         }
     }
@@ -190,7 +193,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> activity?.finish()
+            android.R.id.home -> activity?.onBackPressed()
             R.id.menu_attach -> showFilteringPopUpMenu()
         }
         return true
@@ -251,7 +254,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     @SuppressLint("IntentReset")
     private fun  openGallery() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val intent = Intent(Intent.ACTION_PICK)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         startActivityForResult(intent, PICK_GALLERY_ID)

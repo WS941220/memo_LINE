@@ -98,8 +98,12 @@ class MainPresenter @Inject constructor(
         view?.showOpenMemo(requestMemo.id)
     }
 
-    override fun deleteMemo() {
+    override fun deleteMemo(memoId: String) {
+        memosRepository.deleteMemo(memoId)
+    }
 
+    override fun deleteMemos(memoIds: List<String>) {
+        memosRepository.deleteMemos(memoIds)
     }
 
     override fun addNewMemo() {

@@ -36,6 +36,15 @@ class AddEditMemoActivity : DaggerAppCompatActivity() {
 
     }
 
+    override fun onBackPressed() {
+        if (toolbar.title.equals("메모 수정")) {
+            val showFg = supportFragmentManager.findFragmentById(R.id.contentFrame)
+                    as AddEditMemoFragment
+            showFg.onShow()
+        } else {
+            super.onBackPressed()
+        }
+    }
 
 
 }

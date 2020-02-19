@@ -10,6 +10,7 @@ import com.example.memo_line.util.setupActionBar
 import com.google.android.material.navigation.NavigationView
 
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.shared_toolbar.*
 
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -67,6 +68,18 @@ class MainActivity : DaggerAppCompatActivity() {
             true
         }
     }
+
+    override fun onBackPressed() {
+        if (toolbar.title.equals("메모 삭제")) {
+            val mainFg = supportFragmentManager.findFragmentById(R.id.contentFrame)
+                    as MainFragment
+            mainFg.showMain()
+        }
+        else {
+            super.onBackPressed()
+        }
+    }
+
 
 }
 

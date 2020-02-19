@@ -4,6 +4,7 @@ package com.example.memo_line.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.invalidateOptionsMenu
@@ -25,11 +26,11 @@ import kotlin.math.acos
 @ActivityScoped
 class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemListener {
 
-
     companion object {
         fun newInstance(): MainFragment {
             return MainFragment()
         }
+
     }
     @Inject
     lateinit var presenter: MainContract.Presenter
@@ -40,24 +41,32 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
     private lateinit var mainRecycler: RecyclerView
 
-    private val mainItem = ArrayList<Memo>()
+    private val mainItem = ArrayList<Memo>(0)
+    private val mainItem2 = ArrayList<Memo>(0)
+    private val idList = ArrayList<String>(0)
+
     private lateinit var mainAdapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainAdapter = MainAdapter(context, mainItem, View.GONE,this)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.attach(this)
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.attach(this)
+        Handler().postDelayed({ mainRecycler.scrollToPosition(mainItem.size - 1) }, 200)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.unsubscribe()
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,6 +93,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
                 setOnRefreshListener { presenter.loadMemos(false) }
             }
         }
+
         val mLayoutManager = LinearLayoutManager(context)
         mLayoutManager.reverseLayout  = true
         mLayoutManager.stackFromEnd  = true
@@ -121,14 +131,14 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     /**
      * 편집 클릭 체크박스 활성화
      */
-    private fun showCheckBox() {
+    fun showCheckBox() {
         isDelete = true
         requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.delete_memo)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
             setImageResource(R.drawable.ic_delete)
-            setOnClickListener { deleteMemos() }
+            setOnClickListener { deleteMemos(idList, mainItem2) }
         }
         mainAdapter.visible = View.VISIBLE
         mainAdapter.notifyDataSetChanged()
@@ -137,7 +147,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     /**
      * 메인으로
      */
-    private fun showMain() {
+     fun showMain() {
         isDelete = false
         requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.title)
@@ -153,18 +163,21 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     /**
      * 메모삭제
      */
-    private fun deleteMemos() {
-        val memoList = ArrayList<Memo>()
-        for(i in 0..mainAdapter.memos.size - 1) {
-            if(!mainAdapter.memos[i].isCompleted) {
-                memoList.add(mainAdapter.memos[i])
-            } else {
-                presenter.deleteMemo()
-                mainAdapter.memos[i].isCompleted = false
-            }
+    override fun onMemoDelete(memo: Memo, id: String, check: Boolean) {
+        if(check) {
+            idList.add(id)
+            mainItem2.add(memo)
+        } else {
+            idList.remove(id)
+            mainItem2.remove(memo)
         }
-        mainAdapter.memos = memoList
+    }
+
+    private fun deleteMemos(IdList: List<String>, memoList: List<Memo>) {
+        presenter.deleteMemos(IdList)
+        mainItem.removeAll(memoList)
         mainAdapter.notifyDataSetChanged()
+
     }
 
 
@@ -174,7 +187,8 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
 
     override fun showMemos(memos: List<Memo>) {
-        mainAdapter.memos = memos
+        mainItem.clear()
+        mainItem.addAll(memos)
         mainAdapter.notifyDataSetChanged()
     }
 
@@ -194,7 +208,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
         }
     }
 
-    override fun onMemClick(clickMemo: Memo) {
+    override fun onMemoClick(clickMemo: Memo) {
         presenter.openMemo(clickMemo)
     }
 

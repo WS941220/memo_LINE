@@ -15,6 +15,10 @@ interface MemoDao {
 
     @Query("SELECT * FROM memo WHERE entryid = :memoId") fun getMemoById(memoId: String): Memo?
 
+    @Query("DELETE FROM memo WHERE entryid = :memoId") fun deleteMemoById(memoId: String): Int
+
+    @Query("DELETE FROM memo where entryid in (:idList)") fun deleteMemos(idList: List<String>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertMemo(memo: Memo)
 
 }

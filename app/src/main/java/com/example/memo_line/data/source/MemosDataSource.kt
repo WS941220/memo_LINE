@@ -17,6 +17,10 @@ interface MemosDataSource {
 
     fun insertMemo(memo: Memo)
 
+    fun deleteMemo(memoId: String)
+
+    fun deleteMemos(memos: List<String>)
+
     fun refreshMemos()
 
     fun getMemo(memoId: String, callback: GetMemoCallback)

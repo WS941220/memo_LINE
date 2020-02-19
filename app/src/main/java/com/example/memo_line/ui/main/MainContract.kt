@@ -26,7 +26,9 @@ interface MainContract {
 
         fun addNewMemo()
 
-        fun deleteMemo()
+        fun deleteMemo(memoId: String)
+
+        fun deleteMemos(memoIds: List<String>)
 
         fun openMemo(clickMemo: Memo)
     }

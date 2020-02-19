@@ -52,10 +52,11 @@ class MainAdapter(
             }
             holder.check.setOnCheckedChangeListener { v, isChecked ->
                 memos[position].isCompleted = holder.check.isChecked
+                listener.onMemoDelete(memos[position], memos[position].id, isChecked)
             }
         } else {
             holder.mainCard.setOnClickListener { v ->
-                listener.onMemClick(memos[position])
+                listener.onMemoClick(memos[position])
             }
         }
 
@@ -83,7 +84,9 @@ class MainAdapter(
     }
 
     interface MemoItemListener {
-        fun onMemClick(clickMemo: Memo)
+        fun onMemoDelete(memo: Memo, id: String, check: Boolean)
+
+        fun onMemoClick(clickMemo: Memo)
     }
 
 }
