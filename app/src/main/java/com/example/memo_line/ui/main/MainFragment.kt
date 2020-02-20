@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.actionbar_checkbox.*
 import kotlinx.android.synthetic.main.shared_toolbar.*
 import javax.inject.Inject
 import kotlin.math.acos
@@ -38,7 +40,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     override var isDelete: Boolean = false
 
     private lateinit var rootView: View
-
+    private lateinit var action_check : CheckBox
     private lateinit var mainRecycler: RecyclerView
 
     private val mainItem = ArrayList<Memo>(0)
@@ -49,7 +51,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainAdapter = MainAdapter(context, mainItem, View.GONE,this)
+        mainAdapter = MainAdapter(context, mainItem, View.GONE,false,this)
 
     }
 
@@ -81,6 +83,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
         with(rootView) {
             mainRecycler = findViewById(R.id.mainRecycler)
+            action_check = (activity as AppCompatActivity).supportActionBar?.customView?.findViewById<CheckBox>(R.id.action_check)!!
 
             findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
                 setColorSchemeColors(
@@ -110,7 +113,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
      * 메뉴 inflate
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(isDelete == false) {
+        if(!isDelete) {
             inflater.inflate(R.menu.toolbar_fragment_menu, menu)
         } else {
             inflater.inflate(R.menu.delete_done_menu , menu)
@@ -134,8 +137,13 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     fun showCheckBox() {
         isDelete = true
         requireActivity().invalidateOptionsMenu();
-        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.delete_memo)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowCustomEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.nothing)
+        action_check.setOnCheckedChangeListener{ v, isCecked ->
+            mainAdapter.check = isCecked
+            mainAdapter.notifyDataSetChanged()
+        }
+
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
             setImageResource(R.drawable.ic_delete)
             setOnClickListener { deleteMemos(idList, mainItem2) }
@@ -149,8 +157,10 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
      */
      fun showMain() {
         isDelete = false
+        action_check.isChecked = false
         requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.title)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowCustomEnabled(false)
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
             setImageResource(R.drawable.ic_create)
             setOnClickListener { presenter.addNewMemo()}
@@ -176,6 +186,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     private fun deleteMemos(IdList: List<String>, memoList: List<Memo>) {
         presenter.deleteMemos(IdList)
         mainItem.removeAll(memoList)
+        showMain()
         mainAdapter.notifyDataSetChanged()
 
     }

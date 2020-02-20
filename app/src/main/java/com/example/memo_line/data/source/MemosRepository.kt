@@ -15,15 +15,15 @@ class MemosRepository @Inject constructor(
 ) : MemosDataSource {
 
     var cachedMemos: LinkedHashMap<String, Memo> = LinkedHashMap()
-    var cacheIsDirty = false
+    var cacheIsDirty = true
 
     override fun getMemos(callback: MemosDataSource.LoadMemosCallback) {
 
-        if (cachedMemos.isNotEmpty() && !cacheIsDirty) {
+        if (cachedMemos.isNotEmpty() && cacheIsDirty) {
             callback.onMemosLoaded(ArrayList(cachedMemos.values))
             return
         }
-        if (cacheIsDirty) {
+        if (!cacheIsDirty) {
             val runnable = Runnable {
                 val memos: List<Memo> = memoDao.getMemos()
                 executors.mainThread.execute(Runnable {
@@ -51,10 +51,13 @@ class MemosRepository @Inject constructor(
 
     override fun deleteMemos(memos: List<String>) {
         executors.diskIO.execute { memoDao.deleteMemos(memos)}
+        for (i in 0..memos.size - 1) {
+            cachedMemos.remove(memos[i])
+        }
     }
 
     override fun refreshMemos() {
-        cacheIsDirty = true
+        cacheIsDirty = false
     }
 
     override fun getMemo(memoId: String, callback: MemosDataSource.GetMemoCallback) {
@@ -67,21 +70,5 @@ class MemosRepository @Inject constructor(
             }
         }
     }
-
-//    private fun refreshCache(tasks: List<Memo>) {
-//        cachedMemos.clear()
-//        tasks.forEach {
-//            cacheAndPerform(it) {}
-//        }
-//        cacheIsDirty = false
-//    }
-//
-//    private inline fun cacheAndPerform(task: Memo, perform: (Memo) -> Unit) {
-//        val cachedTask = Memo(task.title, task.content, task.image, task.id).apply {
-//            isCompleted = task.isCompleted
-//        }
-//        cachedMemos.put(cachedTask.id, cachedTask)
-//        perform(cachedTask)
-//    }
 
 }

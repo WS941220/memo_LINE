@@ -1,8 +1,6 @@
 package com.example.memo_line.ui.main
 
 import com.example.memo_line.base.BaseContract
-import com.example.memo_line.base.BasePresenter
-import com.example.memo_line.base.BaseView
 import com.example.memo_line.data.Memo
 
 

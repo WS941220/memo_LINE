@@ -18,7 +18,7 @@ class FullScreenImgActivity : AppCompatActivity() {
 
         val uri = intent.getParcelableExtra<Uri>("uri")
 
-        Glide.with(this).load(uri?.toString()).error(R.drawable.ic_launcher_background).centerCrop().into(fullScreenImg)
+        Glide.with(this).load(uri?.toString()).error(R.drawable.ic_launcher_background).override(200, 200).centerCrop().into(fullScreenImg)
 
     }
 }

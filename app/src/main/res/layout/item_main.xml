@@ -24,9 +24,12 @@
 
             <CheckBox
                 android:id="@+id/check"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center"
+                android:button="@null"
+                android:drawableStart="@drawable/chekbox_background"
                 android:visibility="gone"/>
 
         </LinearLayout>

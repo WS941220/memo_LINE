@@ -6,5 +6,8 @@
     <item
         android:id="@+id/gallery"
         android:title="@string/menu_gallery" />
+    <item
+        android:id="@+id/url"
+        android:title="@string/menu_url"/>
 
 </menu>

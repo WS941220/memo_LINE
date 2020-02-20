@@ -77,12 +77,21 @@ class AddEditMemoPresenter @Inject  constructor(
         }
     }
 
+    override fun deleteMemo(memoId: String) {
+        memosRepository.deleteMemo(memoId)
+        view?.showMemosList()
+    }
+
     override fun callGallery() {
         view?.showGallery()
     }
 
     override fun callCamera() {
         view?.showCamera()
+    }
+
+    override fun callUrl() {
+        view?.showUrl()
     }
 
     /**

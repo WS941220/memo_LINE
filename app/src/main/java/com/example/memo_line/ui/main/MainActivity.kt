@@ -25,18 +25,21 @@ class MainActivity : DaggerAppCompatActivity() {
          * 툴바
          */
         setupActionBar(R.id.toolbar) {
+            setDisplayShowCustomEnabled(false)
+            setCustomView(R.layout.actionbar_checkbox)
             setTitle(R.string.title)
-            setHomeAsUpIndicator(R.drawable.ic_menu)
-            setDisplayHomeAsUpEnabled(true)
+            // 네비 on
+//            setHomeAsUpIndicator(R.drawable.ic_menu)
+//            setDisplayHomeAsUpEnabled(true)
         }
 
-        /**
-         * 네비게이션
-         */
-        drawerLayout = (findViewById<DrawerLayout>(R.id.drawer_layout)).apply {
-            setStatusBarBackground(R.color.colorPrimaryDark)
-        }
-        setupDrawerContent(findViewById(R.id.nav_view))
+//        /**
+//         * 네비게이션 on
+//         */
+//        drawerLayout = (findViewById<DrawerLayout>(R.id.drawer_layout)).apply {
+//            setStatusBarBackground(R.color.colorPrimaryDark)
+//        }
+//        setupDrawerContent(findViewById(R.id.nav_view))
 
         supportFragmentManager.findFragmentById(R.id.contentFrame)
                 as MainFragment? ?: MainFragment.newInstance().also {
@@ -45,32 +48,29 @@ class MainActivity : DaggerAppCompatActivity() {
 
     }
 
-    /**
-     * 네비 오픈
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START)
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun setupDrawerContent(navigationView: NavigationView) {
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            //            if (menuItem.itemId == R.id.statistics_navigation_menu_item) {
-//                val intent = Intent(this@TasksActivity, StatisticsActivity::class.java)
-//                startActivity(intent)
-//            }
-            // Close the navigation drawer when an item is selected.
-            menuItem.isChecked = true
-            drawerLayout.closeDrawers()
-            true
-        }
-    }
+//    /**
+//     * 네비 오픈
+//     */
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (item.itemId == android.R.id.home) {
+//            drawerLayout.openDrawer(GravityCompat.START)
+//            return true
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
+//    /**
+//    * 네비 close
+//    */
+//    private fun setupDrawerContent(navigationView: NavigationView) {
+//        navigationView.setNavigationItemSelectedListener { menuItem ->
+//            menuItem.isChecked = true
+//            drawerLayout.closeDrawers()
+//            true
+//        }
+//    }
 
     override fun onBackPressed() {
-        if (toolbar.title.equals("메모 삭제")) {
+        if (toolbar.title.equals("")) {
             val mainFg = supportFragmentManager.findFragmentById(R.id.contentFrame)
                     as MainFragment
             mainFg.showMain()

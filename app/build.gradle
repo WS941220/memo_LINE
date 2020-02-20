@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.example.memo_line"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -44,9 +44,9 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
 
+    //이미지처리를 위한 glide, 이미지 줌을 위한 Photoview 라이브러리 사용
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
 
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"

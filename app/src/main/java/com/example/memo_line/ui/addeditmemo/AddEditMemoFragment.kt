@@ -3,23 +3,25 @@ package com.example.memo_line.ui.addeditmemo
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.InputType
 import android.view.*
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.request.RequestOptions
 import com.example.memo_line.R
 import com.example.memo_line.ui.FullScreenImgActivity
 import com.example.memo_line.ui.main.AddEditMemoContract
@@ -102,7 +104,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_add_edit_memo, container, false)
-        picAdapter = AddEditMemoAdapter(context, picItem, View.GONE, this)
+        picAdapter = AddEditMemoAdapter(context, picItem, View.VISIBLE, this)
 
         with(rootView) {
             picRecyler = findViewById(R.id.picRecyler)
@@ -112,7 +114,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         picRecyler.layoutManager = GridLayoutManager(context, 3)
         picRecyler.adapter = picAdapter
 
-        editFocusListener()
+        focusChange()
         setHasOptionsMenu(true)
 
         return rootView
@@ -149,12 +151,13 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.nothing)
         activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)?.visibility =
             View.GONE
+        picAdapter.visible = View.GONE
+        picAdapter.notifyDataSetChanged()
         requireActivity().invalidateOptionsMenu();
     }
 
     override fun onEdit() {
         isEdit = true
-        requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.edit_memo)
         val fab = activity?.findViewById<FloatingActionButton>(R.id.fab_edit_memo_done)
         fab?.visibility = View.VISIBLE
@@ -167,6 +170,9 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 presenter.saveMemo(title.text.toString(), content.text.toString(), picItem2)
             }
         }
+        picAdapter.visible = View.VISIBLE
+        picAdapter.notifyDataSetChanged()
+        requireActivity().invalidateOptionsMenu();
     }
 
 
@@ -181,10 +187,10 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
      * 툴바메뉴 아이템 inflate
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (!isShow) {
-            inflater.inflate(R.menu.add_fragment_menu, menu)
-        } else if (isShow && isEdit) {
-            inflater.inflate(R.menu.add_fragment_menu, menu)
+        if (isShow && !isEdit) {
+            inflater.inflate(R.menu.show_menu, menu)
+        } else {
+            inflater.inflate(R.menu.addedit_menu, menu)
         }
     }
 
@@ -194,6 +200,8 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> activity?.onBackPressed()
+            R.id.menu_edit -> onEdit()
+            R.id.menu_delete -> presenter.deleteMemo(arguments?.get(ARGUMENT_SHOW_MEMO_ID).toString())
             R.id.menu_attach -> showFilteringPopUpMenu()
         }
         return true
@@ -211,6 +219,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 when (item.itemId) {
                     R.id.camera -> presenter.callCamera()
                     R.id.gallery -> presenter.callGallery()
+                    R.id.url -> presenter.callUrl()
                 }
 //                presenter.loadTasks(false)
                 true
@@ -316,6 +325,23 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     }
 
+    override fun showUrl() {
+        val builder = AlertDialog.Builder(context)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_url, null)
+        val inputUrl = dialogView.findViewById<EditText>(R.id.inputUrl)
+        builder.setView(dialogView)
+            .setTitle(R.string.menu_url)
+            .setPositiveButton("확인") { dialog, i ->
+                val imgUrl = Uri.parse(inputUrl.text.toString())
+                picItem.add(imgUrl)
+                picAdapter.notifyDataSetChanged()
+            }
+            .setNegativeButton("취소") { dialog, i ->
+                dialog.cancel()
+            }
+            .show()
+    }
+
 
     /**
      * custom file 경로
@@ -365,19 +391,25 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         startActivity(intent)
     }
 
-    private fun editFocusListener() {
+    private fun focusChange() {
         title.setOnFocusChangeListener { v, hasFocus ->
             if (isShow) {
-                onEdit()
+                if (hasFocus) {
+                    onEdit()
+                } else {
+                    onShow()
+                }
             }
         }
-
         content.setOnFocusChangeListener { v, hasFocus ->
             if (isShow) {
-                onEdit()
+                if (hasFocus) {
+                    onEdit()
+                } else {
+                    onShow()
+                }
             }
         }
     }
-
 
 }

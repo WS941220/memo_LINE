@@ -22,7 +22,7 @@ import com.example.memo_line.ui.addeditmemo.AddEditMemoAdapter
 import java.io.File
 
 class MainAdapter(
-    private val context: Context?, var memos: List<Memo>, var visible: Int,
+    private val context: Context?, var memos: List<Memo>, var visible: Int, var check: Boolean,
     fragment: Fragment
 ) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
@@ -39,14 +39,14 @@ class MainAdapter(
         val content = memos[position].content
         val image = Uri.parse(memos[position].image[0])
 
-        holder.title.setText(title)
-        holder.content.setText(content)
-        Glide.with(this.context!!).load(image).centerCrop().into(holder.pic)
+        holder.title.text = title
+        holder.content.text = content
+        Glide.with(this.context!!).load(image).override(150, 120).centerCrop().into(holder.pic)
 
         holder.check.visibility = visible
 
         if(visible == View.VISIBLE) {
-            holder.check.isChecked = false
+            holder.check.isChecked = check
             holder.mainCard.setOnClickListener { v ->
                 holder.check.isChecked = !holder.check.isChecked
             }
@@ -67,7 +67,7 @@ class MainAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MainAdapter.MainViewHolder {
+    ): MainViewHolder {
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_main, parent, false)
         return MainViewHolder(itemView)
     }

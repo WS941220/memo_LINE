@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:baseapp="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_attach"
-        android:title="@string/menu_attach"
-        android:icon="@drawable/ic_attachment"
+        android:id="@+id/menu_edit"
+        android:title="@string/edit_memo"
+        android:icon="@drawable/ic_edit_black"
         baseapp:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete"/>
 </menu>

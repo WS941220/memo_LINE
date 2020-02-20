@@ -1,10 +1,7 @@
 package com.example.memo_line.ui.main
 
 import android.content.Intent
-import android.net.Uri
 import com.example.memo_line.base.BaseContract
-import com.example.memo_line.base.BasePresenter
-import com.example.memo_line.base.BaseView
 
 
 interface AddEditMemoContract {
@@ -33,6 +30,8 @@ interface AddEditMemoContract {
 
         fun showCamera()
 
+        fun showUrl()
+
         fun showSuccessGallery(data: Intent?)
 
         fun showSuccessCamera()
@@ -47,9 +46,13 @@ interface AddEditMemoContract {
 
         fun saveMemo(title: String, content: String, image: List<String>)
 
+        fun deleteMemo(memoId: String)
+
         fun callGallery()
 
         fun callCamera()
+
+        fun callUrl()
     }
 }
 
