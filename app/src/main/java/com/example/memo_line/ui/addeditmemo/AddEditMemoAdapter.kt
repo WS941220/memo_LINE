@@ -19,7 +19,7 @@ import com.example.memo_line.R
 import com.example.memo_line.ui.FullScreenImgActivity
 import java.io.File
 
-class AddEditMemoAdapter(private val context: Context?, var pics: ArrayList<Uri>,
+class AddEditMemoAdapter(private val context: Context?, var pics: ArrayList<Uri>, var visible: Int,
                          fragment: Fragment
 ): RecyclerView.Adapter<AddEditMemoAdapter.AddEditMemoViewHolder>() {
 
@@ -61,7 +61,7 @@ class AddEditMemoAdapter(private val context: Context?, var pics: ArrayList<Uri>
     interface onItemClickListener {
        fun itemRemove(position: Int)
 
-        fun fullImage(imgae: Uri)
+        fun fullImage(image: Uri)
     }
 
 }

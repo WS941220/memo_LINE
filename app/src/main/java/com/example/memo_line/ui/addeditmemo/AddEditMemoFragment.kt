@@ -1,5 +1,6 @@
 package com.example.memo_line.ui.addeditmemo
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -40,7 +41,6 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     companion object {
         const val ARGUMENT_SHOW_MEMO_ID = "SHOW_MEMO_ID"
-        const val ARGUMENT_EDIT_MEMO_ID = "EDIT_MEMO_ID"
         const val PICK_GALLERY_ID = 1
         const val PICK_CAMERA_ID = 2
 
@@ -102,7 +102,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_add_edit_memo, container, false)
-        picAdapter = AddEditMemoAdapter(context, picItem, this)
+        picAdapter = AddEditMemoAdapter(context, picItem, View.GONE, this)
 
         with(rootView) {
             picRecyler = findViewById(R.id.picRecyler)
@@ -183,7 +183,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (!isShow) {
             inflater.inflate(R.menu.add_fragment_menu, menu)
-        } else if(isShow && isEdit) {
+        } else if (isShow && isEdit) {
             inflater.inflate(R.menu.add_fragment_menu, menu)
         }
     }
@@ -220,44 +220,33 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     }
 
     /**
-     * 권한 체크
+     * 갤러리 권한 체크
      */
     override fun showGallery() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (context?.let {
-                    ContextCompat.checkSelfPermission(
-                        it,
-                        android.Manifest.permission.CAMERA
-                    )
-                } != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                    context!!,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                activity?.let {
-                    ActivityCompat.requestPermissions(
-                        it,
-                        arrayOf(
-                            android.Manifest.permission.CAMERA,
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ), PICK_GALLERY_ID
-                    )
-                }
-            } else {
-                openGallery()
-            }
+        if (ContextCompat.checkSelfPermission(
+                activity!!,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity!!,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PICK_GALLERY_ID
+            )
         } else {
             openGallery()
         }
-
     }
 
     @SuppressLint("IntentReset")
-    private fun  openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-        startActivityForResult(intent, PICK_GALLERY_ID)
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/*")
+        startActivityForResult(Intent.createChooser(intent, "photo"), PICK_GALLERY_ID)
     }
 
     /**
@@ -284,29 +273,16 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
      * 카메라 권한 체크
      */
     override fun showCamera() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (context?.let {
-                    ContextCompat.checkSelfPermission(
-                        it,
-                        android.Manifest.permission.CAMERA
-                    )
-                } != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                    context!!,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                activity?.let {
-                    ActivityCompat.requestPermissions(
-                        it,
-                        arrayOf(
-                            android.Manifest.permission.CAMERA,
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ), PICK_GALLERY_ID
-                    )
-                }
-            } else {
-                openCamera()
-            }
+        if (ContextCompat.checkSelfPermission(
+                activity!!,
+                Manifest.permission.CAMERA
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity!!,
+                arrayOf(Manifest.permission.CAMERA), PICK_CAMERA_ID
+            )
         } else {
             openCamera()
         }
@@ -395,6 +371,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 onEdit()
             }
         }
+
         content.setOnFocusChangeListener { v, hasFocus ->
             if (isShow) {
                 onEdit()

@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/picCard"
     android:layout_width="85dp"
     android:layout_height="85dp"
-    android:layout_marginLeft="@dimen/card_margin_side"
+    android:layout_marginStart="@dimen/card_margin_side"
     android:layout_marginTop="@dimen/card_margin_top"
+    card_view:cardCornerRadius="@dimen/img_raius"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/pic"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
 
         <ImageButton
             android:id="@+id/picRemove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:background="#FF0000"
+            android:background="@drawable/main_img_background"
             android:src="@drawable/ic_remove" />
 
-        <ImageView
-            android:id="@+id/pic"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
