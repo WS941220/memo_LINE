@@ -12,9 +12,13 @@ interface MainContract {
 
         fun showMemos(memos: List<Memo> )
 
+        fun showNoMemos()
+
         fun showAddMemo()
 
         fun showOpenMemo(memoId: String)
+
+        fun showSuccessfullySavedMessage()
     }
 
     interface Presenter : BaseContract.Presenter<View> {

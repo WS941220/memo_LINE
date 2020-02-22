@@ -41,7 +41,9 @@ class MainAdapter(
 
         holder.title.text = title
         holder.content.text = content
-        Glide.with(this.context!!).load(image).override(150, 120).centerCrop().into(holder.pic)
+        if(image != null) {
+            Glide.with(this.context!!).load(image).centerCrop().into(holder.pic)
+        }
 
         holder.check.visibility = visible
 

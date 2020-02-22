@@ -82,7 +82,7 @@ class MainPresenter @Inject constructor(
     }
 
     private fun processEmptyMemos() {
-//        view.showNoMemos()
+        view?.showNoMemos()
     }
 
     override fun result(requestCode: Int, resultCode: Int) {
@@ -90,7 +90,7 @@ class MainPresenter @Inject constructor(
         if (AddEditMemoActivity.REQUEST_ADD_MEMO ==
             requestCode && Activity.RESULT_OK == resultCode
         ) {
-//            view.showSuccessfullySavedMessage()
+            view?.showSuccessfullySavedMessage()
         }
     }
 

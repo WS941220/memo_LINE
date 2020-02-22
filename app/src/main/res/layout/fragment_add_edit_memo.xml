@@ -27,7 +27,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/title_hint"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:theme="@style/EditTextStyle"/>
 
         <EditText
             android:id="@+id/add_memo_content"
@@ -35,7 +36,8 @@
             android:layout_height="wrap_content"
             android:minHeight="350dp"
             android:gravity="top"
-            android:hint="@string/content_hint" />
+            android:hint="@string/content_hint"
+            app:theme="@style/EditTextStyle"/>
 
     </LinearLayout>
 

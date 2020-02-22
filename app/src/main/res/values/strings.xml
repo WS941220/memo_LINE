@@ -21,8 +21,13 @@
     <string name="title_hint">제목</string>
     <string name="content_hint">내용</string>
 
-    <string name="fail_multi_gallery">사진 선택에 실패했습니다.</string>
+    <string name="no_title">제목 없음</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_memo">이미지를 추가하거나 내용을 입력해주세요.</string>
+    <string name="fail_multi_gallery">사진 선택에 실패했습니다.</string>
+    <string name="fail_url">유효하지 않은 URL입니다.</string>
+    <string name="fail_image">이미지를 불러오는데 실패했습니다.</string>
+    <string name="no_memo">메모가 없어요!</string>
+
+
 </resources>

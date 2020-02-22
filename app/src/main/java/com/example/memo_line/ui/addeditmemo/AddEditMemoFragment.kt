@@ -12,6 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
 import android.view.*
+import android.webkit.URLUtil
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import java.io.File
 import java.io.IOException
+import java.net.URLConnection
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -325,6 +327,9 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
 
     }
 
+    /**
+     * URL(링크)로 이미지 추가
+     */
     override fun showUrl() {
         val builder = AlertDialog.Builder(context)
         val dialogView = layoutInflater.inflate(R.layout.dialog_url, null)
@@ -332,14 +337,25 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         builder.setView(dialogView)
             .setTitle(R.string.menu_url)
             .setPositiveButton("확인") { dialog, i ->
-                val imgUrl = Uri.parse(inputUrl.text.toString())
-                picItem.add(imgUrl)
+                val imgUrl = inputUrl.text.toString()
+                val urlCheck = URLUtil.isValidUrl(imgUrl)
+                if(urlCheck) {
+                    picItem.add(Uri.parse(imgUrl))
+                } else {
+                    presenter.showMessage(getString(R.string.fail_url))
+                }
+
                 picAdapter.notifyDataSetChanged()
             }
             .setNegativeButton("취소") { dialog, i ->
                 dialog.cancel()
             }
             .show()
+    }
+
+    override fun failImage() {
+        presenter.showMessage(getString(R.string.fail_image))
+        picItem.removeAt(picItem.size - 1)
     }
 
 
@@ -377,7 +393,16 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         picAdapter.notifyDataSetChanged()
     }
 
+    /**
+     * 아무것도 안 적었을시
+     */
+    override fun showEmptyMemo() {
+        presenter.showMessage(getString(R.string.empty_memo))
+    }
 
+    /**
+     * Activity finish
+     */
     override fun showMemosList() {
         activity?.apply {
             setResult(Activity.RESULT_OK)
@@ -385,12 +410,25 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         }
     }
 
+    /**
+     * Activity finish
+     */
+    override fun showMemosDeleted() {
+        activity?.finish()
+    }
+
+    /**
+     * 이미지 클릭시
+     */
     override fun fullImage(image: Uri) {
         val intent = Intent(this.context, FullScreenImgActivity::class.java)
         intent.putExtra("uri", image)
         startActivity(intent)
     }
 
+    /**
+     * focus가 주어지면 edit으로
+     */
     private fun focusChange() {
         title.setOnFocusChangeListener { v, hasFocus ->
             if (isShow) {

@@ -79,7 +79,7 @@ class AddEditMemoPresenter @Inject  constructor(
 
     override fun deleteMemo(memoId: String) {
         memosRepository.deleteMemo(memoId)
-        view?.showMemosList()
+        view?.showMemosDeleted()
     }
 
     override fun callGallery() {
@@ -100,7 +100,7 @@ class AddEditMemoPresenter @Inject  constructor(
     private fun createMemo(title: String, content: String, image: List<String>) {
         val newMemo = Memo(title, content, image)
         if (newMemo.isEmpty) {
-//            view.showEmptyTaskError()
+            view?.showEmptyMemo()
         } else {
             memosRepository.insertMemo(newMemo)
             view?.showMemosList()

@@ -69,8 +69,11 @@ class MainActivity : DaggerAppCompatActivity() {
 //        }
 //    }
 
+    /**
+     * 뒤로가기 버튼 이벤트
+     */
     override fun onBackPressed() {
-        if (toolbar.title.equals("")) {
+        if (toolbar.title.equals(getString(R.string.nothing))) {
             val mainFg = supportFragmentManager.findFragmentById(R.id.contentFrame)
                     as MainFragment
             mainFg.showMain()

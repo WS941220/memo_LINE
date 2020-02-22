@@ -22,7 +22,11 @@ interface AddEditMemoContract {
 
         fun showMessage(msg: String)
 
+        fun showEmptyMemo()
+
         fun showMemosList()
+
+        fun showMemosDeleted()
 
         fun showFilteringPopUpMenu()
 

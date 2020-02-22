@@ -45,15 +45,20 @@ class MemosRepository @Inject constructor(
     }
 
     override fun deleteMemo(memoId: String) {
-        executors.diskIO.execute { memoDao.deleteMemoById(memoId)}
+        executors.diskIO.execute { memoDao.deleteMemoById(memoId) }
         cachedMemos.remove(memoId)
+
     }
 
     override fun deleteMemos(memos: List<String>) {
-        executors.diskIO.execute { memoDao.deleteMemos(memos)}
+        executors.diskIO.execute { memoDao.deleteMemos(memos) }
+
         for (i in 0..memos.size - 1) {
             cachedMemos.remove(memos[i])
+
         }
+
+
     }
 
     override fun refreshMemos() {

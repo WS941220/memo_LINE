@@ -28,7 +28,7 @@
             android:layout_marginEnd="4dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/main_img_background"
+            android:background="@drawable/remove_img_background"
             android:src="@drawable/ic_remove" />
 
 

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.widget.CheckBox
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.content.ContextCompat
@@ -34,13 +35,15 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
         }
 
     }
+
     @Inject
     lateinit var presenter: MainContract.Presenter
 
     override var isDelete: Boolean = false
 
     private lateinit var rootView: View
-    private lateinit var action_check : CheckBox
+    private lateinit var action_check: CheckBox
+    private lateinit var noMemo: TextView
     private lateinit var mainRecycler: RecyclerView
 
     private val mainItem = ArrayList<Memo>(0)
@@ -51,7 +54,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainAdapter = MainAdapter(context, mainItem, View.GONE,false,this)
+        mainAdapter = MainAdapter(context, mainItem, View.GONE, false, this)
 
     }
 
@@ -63,12 +66,14 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     override fun onResume() {
         super.onResume()
         Handler().postDelayed({ mainRecycler.scrollToPosition(mainItem.size - 1) }, 200)
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.unsubscribe()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -83,7 +88,10 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
         with(rootView) {
             mainRecycler = findViewById(R.id.mainRecycler)
-            action_check = (activity as AppCompatActivity).supportActionBar?.customView?.findViewById<CheckBox>(R.id.action_check)!!
+            action_check =
+                (activity as AppCompatActivity).supportActionBar?.customView?.findViewById<CheckBox>(
+                    R.id.action_check
+                )!!
 
             findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
                 setColorSchemeColors(
@@ -95,11 +103,13 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
                 scrollUpChild = mainRecycler
                 setOnRefreshListener { presenter.loadMemos(false) }
             }
+
+            noMemo = findViewById(R.id.noMemo)
         }
 
         val mLayoutManager = LinearLayoutManager(context)
-        mLayoutManager.reverseLayout  = true
-        mLayoutManager.stackFromEnd  = true
+        mLayoutManager.reverseLayout = true
+        mLayoutManager.stackFromEnd = true
 
         mainRecycler.layoutManager = mLayoutManager
         mainRecycler.adapter = mainAdapter
@@ -113,10 +123,10 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
      * 메뉴 inflate
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if(!isDelete) {
+        if (!isDelete) {
             inflater.inflate(R.menu.toolbar_fragment_menu, menu)
         } else {
-            inflater.inflate(R.menu.delete_done_menu , menu)
+            inflater.inflate(R.menu.delete_done_menu, menu)
         }
     }
 
@@ -139,12 +149,12 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
         requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowCustomEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.nothing)
-        action_check.setOnCheckedChangeListener{ v, isCecked ->
+        action_check.setOnCheckedChangeListener { v, isCecked ->
             mainAdapter.check = isCecked
             mainAdapter.notifyDataSetChanged()
         }
 
-        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply {
             setImageResource(R.drawable.ic_delete)
             setOnClickListener { deleteMemos(idList, mainItem2) }
         }
@@ -155,15 +165,15 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     /**
      * 메인으로
      */
-     fun showMain() {
+    fun showMain() {
         isDelete = false
         action_check.isChecked = false
         requireActivity().invalidateOptionsMenu();
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.title)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowCustomEnabled(false)
-        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply{
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply {
             setImageResource(R.drawable.ic_create)
-            setOnClickListener { presenter.addNewMemo()}
+            setOnClickListener { presenter.addNewMemo() }
         }
         mainAdapter.visible = View.GONE
         mainAdapter.notifyDataSetChanged()
@@ -171,10 +181,17 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     }
 
     /**
+     * 메모 저장 메세지
+     */
+    override fun showSuccessfullySavedMessage() {
+
+    }
+
+    /**
      * 메모삭제
      */
     override fun onMemoDelete(memo: Memo, id: String, check: Boolean) {
-        if(check) {
+        if (check) {
             idList.add(id)
             mainItem2.add(memo)
         } else {
@@ -186,6 +203,9 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     private fun deleteMemos(IdList: List<String>, memoList: List<Memo>) {
         presenter.deleteMemos(IdList)
         mainItem.removeAll(memoList)
+        if(mainItem.isEmpty()) {
+            showNoMemos()
+        }
         showMain()
         mainAdapter.notifyDataSetChanged()
 
@@ -198,9 +218,16 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
 
     override fun showMemos(memos: List<Memo>) {
+        mainRecycler.visibility = View.VISIBLE
+        noMemo.visibility = View.GONE
         mainItem.clear()
         mainItem.addAll(memos)
         mainAdapter.notifyDataSetChanged()
+    }
+
+    override fun showNoMemos() {
+        noMemo.visibility = View.VISIBLE
+        mainRecycler.visibility = View.GONE
     }
 
     /**
