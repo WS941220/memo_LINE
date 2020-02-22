@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -334,7 +335,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
         val builder = AlertDialog.Builder(context)
         val dialogView = layoutInflater.inflate(R.layout.dialog_url, null)
         val inputUrl = dialogView.findViewById<EditText>(R.id.inputUrl)
-        builder.setView(dialogView)
+        val dialog = builder.setView(dialogView)
             .setTitle(R.string.menu_url)
             .setPositiveButton("확인") { dialog, i ->
                 val imgUrl = inputUrl.text.toString()
@@ -351,6 +352,8 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
                 dialog.cancel()
             }
             .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK)
     }
 
     override fun failImage() {
