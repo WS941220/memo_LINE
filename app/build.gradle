@@ -45,6 +45,13 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$roomVersion"
 
     //이미지처리를 위한 glide, 이미지 줌을 위한 Photoview 라이브러리 사용
+    /**
+     * PhotoView
+     * https://github.com/chrisbanes/PhotoView
+     *
+     * Glide
+     * https://github.com/bumptech/glide
+     */
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
