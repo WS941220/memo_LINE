@@ -46,18 +46,27 @@ class MainAdapter(
         }
 
         holder.check.visibility = visible
+        holder.check.isChecked = memos[position].isChecked
 
         if(visible == View.VISIBLE) {
             holder.check.isChecked = check
-            holder.mainCard.setOnClickListener { v ->
+            if(check) {
+                listener.onCheckAllMemos()
+            } else if (!check) {
+                listener.onCancelAllMemos()
+            }
+            holder.mainCard.setOnClickListener {
                 holder.check.isChecked = !holder.check.isChecked
             }
-            holder.check.setOnCheckedChangeListener { v, isChecked ->
-                memos[position].isCompleted = holder.check.isChecked
-                listener.onMemoDelete(memos[position], memos[position].id, isChecked)
+            holder.check.setOnCheckedChangeListener { _ , isChecked ->
+                if(isChecked) {
+                    listener.onCheckMemoClick(memos[position])
+                } else {
+                    listener.onCancelMemoClick(memos[position])
+                }
             }
         } else {
-            holder.mainCard.setOnClickListener { v ->
+            holder.mainCard.setOnClickListener {
                 listener.onMemoClick(memos[position])
             }
         }
@@ -86,7 +95,13 @@ class MainAdapter(
     }
 
     interface MemoItemListener {
-        fun onMemoDelete(memo: Memo, id: String, check: Boolean)
+        fun onCheckAllMemos()
+
+        fun onCancelAllMemos()
+
+        fun onCheckMemoClick(checkMemo: Memo)
+
+        fun onCancelMemoClick(cancelMemo: Memo)
 
         fun onMemoClick(clickMemo: Memo)
     }

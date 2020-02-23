@@ -35,7 +35,7 @@ class FullScreenImgActivity : AppCompatActivity() {
             bringToFront()
         }
 
-        Glide.with(this).load(uri?.toString()).error(R.drawable.ic_not_found).centerCrop().into(fullScreenImg)
+        Glide.with(this).load(uri?.toString()).error(R.drawable.ic_not_found).into(fullScreenImg)
 
     }
 

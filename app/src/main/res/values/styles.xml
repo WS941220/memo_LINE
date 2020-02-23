@@ -7,9 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+    <style name="EditTextStyle">
         <item name="colorControlNormal">@color/colorPrimaryDark</item>
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="android:textColorHighlight">@color/highlight</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">

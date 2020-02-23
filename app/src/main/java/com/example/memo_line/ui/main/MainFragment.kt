@@ -18,10 +18,13 @@ import com.example.memo_line.R
 import com.example.memo_line.data.Memo
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
+import com.example.memo_line.util.showSnackBar
 import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.actionbar_checkbox.*
+import kotlinx.android.synthetic.main.item_main.view.*
 import kotlinx.android.synthetic.main.shared_toolbar.*
 import javax.inject.Inject
 import kotlin.math.acos
@@ -47,8 +50,6 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     private lateinit var mainRecycler: RecyclerView
 
     private val mainItem = ArrayList<Memo>(0)
-    private val mainItem2 = ArrayList<Memo>(0)
-    private val idList = ArrayList<String>(0)
 
     private lateinit var mainAdapter: MainAdapter
 
@@ -93,17 +94,6 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
                     R.id.action_check
                 )!!
 
-            findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
-                setColorSchemeColors(
-                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark),
-                    ContextCompat.getColor(requireContext(), R.color.white),
-                    ContextCompat.getColor(requireContext(), R.color.white)
-                )
-                // Set the scrolling view in the custom SwipeRefreshLayout.
-                scrollUpChild = mainRecycler
-                setOnRefreshListener { presenter.loadMemos(false) }
-            }
-
             noMemo = findViewById(R.id.noMemo)
         }
 
@@ -118,6 +108,8 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
         return rootView
     }
+
+
 
     /**
      * 메뉴 inflate
@@ -142,6 +134,13 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
     }
 
     /**
+     * 스낵바 메시지
+     */
+    override fun showMessage(msg: String) {
+        view?.showSnackBar(msg, Snackbar.LENGTH_LONG)
+    }
+
+    /**
      * 편집 클릭 체크박스 활성화
      */
     fun showCheckBox() {
@@ -156,7 +155,7 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
 
         requireActivity().findViewById<FloatingActionButton>(R.id.fab_add_memo).apply {
             setImageResource(R.drawable.ic_delete)
-            setOnClickListener { deleteMemos(idList, mainItem2) }
+            setOnClickListener { presenter.deleteCheckedMemos() }
         }
         mainAdapter.visible = View.VISIBLE
         mainAdapter.notifyDataSetChanged()
@@ -184,31 +183,43 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
      * 메모 저장 메세지
      */
     override fun showSuccessfullySavedMessage() {
-
+        presenter.showMessage(getString(R.string.save_memo))
     }
 
     /**
-     * 메모삭제
+     * 전체 선택
      */
-    override fun onMemoDelete(memo: Memo, id: String, check: Boolean) {
-        if (check) {
-            idList.add(id)
-            mainItem2.add(memo)
-        } else {
-            idList.remove(id)
-            mainItem2.remove(memo)
-        }
+    override fun onCheckAllMemos() {
+        presenter.onCheckAllMemos()
     }
 
-    private fun deleteMemos(IdList: List<String>, memoList: List<Memo>) {
-        presenter.deleteMemos(IdList)
-        mainItem.removeAll(memoList)
-        if(mainItem.isEmpty()) {
-            showNoMemos()
-        }
-        showMain()
-        mainAdapter.notifyDataSetChanged()
+    /**
+     * 전체 선택 취소
+     */
+    override fun onCancelAllMemos() {
+        presenter.onCancelAllMemos()
+    }
 
+    /**
+     * 메모 선택
+     */
+    override fun onCheckMemoClick(checkMemo: Memo) {
+        presenter.checkedMemo(checkMemo)
+    }
+
+    /**
+     * 선택 취소
+     */
+    override fun onCancelMemoClick(cancelMemo: Memo) {
+        presenter.canceledMemo(cancelMemo)
+    }
+
+    /**
+     * 선택된 메모 삭제
+     */
+    override fun showDeleteMemos() {
+        showMain()
+        presenter.showMessage(getString(R.string.remove_memo))
     }
 
 
@@ -238,18 +249,14 @@ class MainFragment : DaggerFragment(), MainContract.View, MainAdapter.MemoItemLi
         startActivityForResult(intent, AddEditMemoActivity.REQUEST_ADD_MEMO)
     }
 
-    override fun setLoadingIndicator(active: Boolean) {
-        val root = view ?: return
-        with(root.findViewById<SwipeRefreshLayout>(R.id.refresh_layout)) {
-            // Make sure setRefreshing() is called after the layout is done with everything else.
-            post { isRefreshing = active }
-        }
-    }
 
     override fun onMemoClick(clickMemo: Memo) {
         presenter.openMemo(clickMemo)
     }
 
+    /**
+     * 메모 보기
+     */
     override fun showOpenMemo(memoId: String) {
         val intent = Intent(context, AddEditMemoActivity::class.java).apply {
             putExtra(AddEditMemoFragment.ARGUMENT_SHOW_MEMO_ID, memoId)

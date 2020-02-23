@@ -404,6 +404,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     }
 
     /**
+     * 저장 했을 때
      * Activity finish
      */
     override fun showMemosList() {
@@ -414,10 +415,12 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     }
 
     /**
+     * 삭제 되었을 때
      * Activity finish
      */
     override fun showMemosDeleted() {
         activity?.finish()
+        presenter.showMessage(getString(R.string.remove_memo))
     }
 
     /**

@@ -8,13 +8,15 @@ interface MainContract {
     interface View: BaseContract.View {
         var isDelete: Boolean
 
-        fun setLoadingIndicator(active: Boolean)
+        fun showMessage(msg: String)
 
         fun showMemos(memos: List<Memo> )
 
         fun showNoMemos()
 
         fun showAddMemo()
+
+        fun showDeleteMemos()
 
         fun showOpenMemo(memoId: String)
 
@@ -26,11 +28,21 @@ interface MainContract {
 
         fun result(requestCode: Int, resultCode: Int)
 
+        fun showMessage(msg: String)
+
         fun addNewMemo()
 
-        fun deleteMemo(memoId: String)
+        fun onCheckAllMemos()
 
-        fun deleteMemos(memoIds: List<String>)
+        fun onCancelAllMemos()
+
+        fun checkedMemo(checkedMemo: Memo)
+
+        fun canceledMemo(canceledMemo: Memo)
+
+        fun deleteCheckedMemos()
+
+        fun deleteMemo(memoId: String)
 
         fun openMemo(clickMemo: Memo)
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">memo_LINE</string>
+    <string name="app_name">메모(LINE)</string>
     <string name="title">모든 메모</string>
     <string name="add_memo">글 작성</string>
     <string name="edit_memo">메모 수정</string>
@@ -22,6 +22,9 @@
     <string name="content_hint">내용</string>
 
     <string name="no_title">제목 없음</string>
+
+    <string name="save_memo">메모가 저장되었습니다.</string>
+    <string name="remove_memo">삭제되었습니다.</string>
 
     <string name="empty_memo">이미지를 추가하거나 내용을 입력해주세요.</string>
     <string name="fail_multi_gallery">사진 선택에 실패했습니다.</string>

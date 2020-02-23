@@ -33,54 +33,56 @@ class MainPresenter @Inject constructor(
         loadMemos(false)
     }
 
+    /**
+     * 스낵바 메세지
+     */
+    override fun showMessage(msg: String) {
+        view?.showMessage(msg)
+    }
+
     override fun loadMemos(forceUpdate: Boolean) {
-        // Simplification for sample: a network reload will be forced on first load.
-        loadMemos(forceUpdate || firstLoad, true)
+        loadMemoss(forceUpdate || firstLoad)
         firstLoad = false
     }
 
-
-    private fun loadMemos(forceUpdate: Boolean, showLoadingUI: Boolean) {
-        if (showLoadingUI) {
-            if (view != null) {
-                view?.setLoadingIndicator(true)
-            }
-        }
+    /**
+     *메모리스트 로드
+     */
+    private fun loadMemoss(forceUpdate: Boolean) {
         if (forceUpdate) {
             memosRepository.refreshMemos()
         }
 
+        /**
+         * 메모리스트 가져옴
+         */
         memosRepository.getMemos(object : MemosDataSource.LoadMemosCallback {
             override fun onMemosLoaded(memos: List<Memo>) {
                 val memosToShow = ArrayList<Memo>()
                 for (memo in memos) {
                     memosToShow.add(memo)
                 }
-
-                if (showLoadingUI) {
-                    view?.setLoadingIndicator(false)
-                }
                 processMemos(memosToShow)
             }
-
             override fun onDataNotAvailable() {
+
             }
         })
 
-        if (showLoadingUI) {
-            view?.setLoadingIndicator(false)
-        }
     }
+
 
     private fun processMemos(memos: List<Memo>) {
         if (memos.isEmpty()) {
             processEmptyMemos()
         } else {
-            // Show the list of tasks
             view?.showMemos(memos)
         }
     }
 
+    /**
+     * 가져온 메모리스트가 없을 시
+     */
     private fun processEmptyMemos() {
         view?.showNoMemos()
     }
@@ -94,18 +96,61 @@ class MainPresenter @Inject constructor(
         }
     }
 
-    override fun openMemo(requestMemo: Memo) {
-        view?.showOpenMemo(requestMemo.id)
+    /**
+     * 메모클릭
+     */
+    override fun openMemo(clickMemo: Memo) {
+        view?.showOpenMemo(clickMemo.id)
     }
 
+
+    /**
+     * 메모 삭제
+     */
     override fun deleteMemo(memoId: String) {
         memosRepository.deleteMemo(memoId)
     }
 
-    override fun deleteMemos(memoIds: List<String>) {
-        memosRepository.deleteMemos(memoIds)
+    /**
+     * 전체 선택
+     */
+    override fun onCheckAllMemos() {
+        memosRepository.checkAllMemo()
     }
 
+    /**
+     * 전체 선택 취소
+     */
+    override fun onCancelAllMemos() {
+        memosRepository.cancelAllMemo()
+    }
+
+    /**
+     * 메모 선택
+     */
+    override fun checkedMemo(checkedMemo: Memo) {
+        memosRepository.checkedMemo(checkedMemo)
+    }
+
+    /**
+     * 선택 취소
+     */
+    override fun canceledMemo(canceledMemo: Memo) {
+        memosRepository.canceledMemo(canceledMemo)
+    }
+
+    /**
+     * 선택메모 삭제
+     */
+    override fun deleteCheckedMemos() {
+        memosRepository.deleteCheckedMemos()
+        loadMemos(false)
+        view?.showDeleteMemos()
+    }
+
+    /**
+     * 메모추가 눌렀을 시
+     */
     override fun addNewMemo() {
         view?.showAddMemo()
     }

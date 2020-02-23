@@ -17,6 +17,9 @@ class MemosRepository @Inject constructor(
     var cachedMemos: LinkedHashMap<String, Memo> = LinkedHashMap()
     var cacheIsDirty = true
 
+    /**
+     * 메모리스트 가져옴
+     */
     override fun getMemos(callback: MemosDataSource.LoadMemosCallback) {
 
         if (cachedMemos.isNotEmpty() && cacheIsDirty) {
@@ -34,6 +37,9 @@ class MemosRepository @Inject constructor(
         }
     }
 
+    /**
+     * 메모 추가
+     */
     override fun insertMemo(memo: Memo) {
         executors.diskIO.execute { memoDao.insertMemo(memo) }
 
@@ -44,20 +50,56 @@ class MemosRepository @Inject constructor(
         cachedMemos.put(memo.id, memo)
     }
 
+    /**
+     * 전체 선택
+     */
+    override fun checkAllMemo() {
+        executors.diskIO.execute {memoDao.updateChecked(true)}
+    }
+
+    /**
+     * 전체 선택 취소
+     */
+    override fun cancelAllMemo() {
+        executors.diskIO.execute {memoDao.updateChecked(false)}
+    }
+
+    /**
+     * 메모 선택
+     */
+    override fun checkedMemo(checkedMemo: Memo) {
+        cacheAndPerform(checkedMemo) {
+            it.isChecked = true
+            executors.diskIO.execute {memoDao.updateChecked(checkedMemo.id, true)}
+        }
+    }
+
+    /**
+     * 메모 선택 취소
+     */
+    override fun canceledMemo(canceledMemo: Memo) {
+        cacheAndPerform(canceledMemo) {
+            it.isChecked = false
+            executors.diskIO.execute {memoDao.updateChecked(canceledMemo.id, false)}
+        }
+    }
+
+    /**
+     * 선택메모 삭제
+     */
+    override fun deleteCheckedMemos() {
+        cachedMemos = cachedMemos.filterValues {
+            !it.isChecked
+        } as LinkedHashMap<String, Memo>
+        executors.diskIO.execute {memoDao.deleteCheckedMemos() }
+    }
+
+    /**
+     * 메모 삭제
+     */
     override fun deleteMemo(memoId: String) {
         executors.diskIO.execute { memoDao.deleteMemoById(memoId) }
         cachedMemos.remove(memoId)
-
-    }
-
-    override fun deleteMemos(memos: List<String>) {
-        executors.diskIO.execute { memoDao.deleteMemos(memos) }
-
-        for (i in 0..memos.size - 1) {
-            cachedMemos.remove(memos[i])
-
-        }
-
 
     }
 
@@ -65,6 +107,9 @@ class MemosRepository @Inject constructor(
         cacheIsDirty = false
     }
 
+    /**
+     * 메모 가져옴
+     */
     override fun getMemo(memoId: String, callback: MemosDataSource.GetMemoCallback) {
         executors.diskIO.execute {
             val memo = memoDao.getMemoById(memoId)
@@ -74,6 +119,14 @@ class MemosRepository @Inject constructor(
                 }
             }
         }
+    }
+
+    private inline fun cacheAndPerform(memo: Memo, perform: (Memo) -> Unit) {
+        val cachedMemo = Memo(memo.title, memo.content, memo.image, memo.id).apply {
+            isChecked = memo.isChecked
+        }
+        cachedMemos.put(cachedMemo.id, cachedMemo)
+        perform(cachedMemo)
     }
 
 }

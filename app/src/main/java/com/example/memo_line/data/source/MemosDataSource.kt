@@ -17,26 +17,20 @@ interface MemosDataSource {
 
     fun insertMemo(memo: Memo)
 
-    fun deleteMemo(memoId: String)
+    fun checkAllMemo()
 
-    fun deleteMemos(memos: List<String>)
+    fun cancelAllMemo()
+
+    fun checkedMemo(checkedMemo: Memo)
+
+    fun canceledMemo(canceledMemo: Memo)
+
+    fun deleteCheckedMemos()
+
+    fun deleteMemo(memoId: String)
 
     fun refreshMemos()
 
     fun getMemo(memoId: String, callback: GetMemoCallback)
 
-//
-//    fun completeTask(task: Task)
-//
-//    fun completeTask(taskId: String)
-//
-//    fun activateTask(task: Task)
-//
-//    fun activateTask(taskId: String)
-//
-//    fun clearCompletedTasks()
-//
-//    fun deleteAllTasks()
-//
-//    fun deleteTask(taskId: String)
 }

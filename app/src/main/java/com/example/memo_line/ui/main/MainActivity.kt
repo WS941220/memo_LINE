@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.shared_toolbar.*
 
 class MainActivity : DaggerAppCompatActivity() {
 
-    private lateinit var drawerLayout: DrawerLayout
+//    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
