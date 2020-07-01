@@ -1,4 +1,4 @@
-package com.example.practice_test.di.module
+package com.example.memo_line.di.module
 
 import android.app.Application
 import android.content.Context

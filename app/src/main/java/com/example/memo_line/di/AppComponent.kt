@@ -4,9 +4,9 @@ import android.app.Application
 import com.example.memo_line.base.BaseApp
 import com.example.memo_line.data.source.MemosRepository
 import com.example.memo_line.di.Scoped.AppScoped
+import com.example.memo_line.di.module.ApplicationModule
 import com.example.memo_line.di.module.MemosRepositoryMoudle
-import com.example.practice_test.di.module.ActivityModule
-import com.example.practice_test.di.module.ApplicationModule
+import com.example.memo_line.di.moudle.ActivityModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector

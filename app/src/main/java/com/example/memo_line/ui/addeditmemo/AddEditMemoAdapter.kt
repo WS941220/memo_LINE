@@ -68,7 +68,7 @@ class AddEditMemoAdapter(
 
         holder.picRemove.visibility = visible
 
-        holder.picRemove!!.setOnClickListener {
+        holder.picRemove.setOnClickListener {
             listener.itemRemove(position)
         }
 
@@ -88,8 +88,8 @@ class AddEditMemoAdapter(
 
 
     class AddEditMemoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val picRemove = itemView.findViewById<ImageButton>(R.id.picRemove)
-        val pic = itemView.findViewById<ImageView>(R.id.pic)
+        val picRemove: ImageButton = itemView.findViewById(R.id.picRemove)
+        val pic: ImageView = itemView.findViewById(R.id.pic)
 
     }
 

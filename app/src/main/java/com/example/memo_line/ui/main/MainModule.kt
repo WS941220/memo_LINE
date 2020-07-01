@@ -1,7 +1,8 @@
 package com.example.memo_line.ui.main
 
 import com.example.memo_line.di.Scoped.FragmentScoped
-import com.example.practice_test.di.Scoped.ActivityScoped
+import com.example.memo_line.di.Scoped.ActivityScoped
+
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

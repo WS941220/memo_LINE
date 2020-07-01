@@ -1,10 +1,10 @@
 package com.example.memo_line.ui.addeditmemo
 
 import androidx.annotation.Nullable
+import com.example.memo_line.di.Scoped.ActivityScoped
 import com.example.memo_line.di.Scoped.FragmentScoped
 import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.ui.main.AddEditMemoPresenter
-import com.example.practice_test.di.Scoped.ActivityScoped
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

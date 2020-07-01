@@ -1,4 +1,4 @@
-package com.example.practice_test.di.Scoped
+package com.example.memo_line.di.Scoped
 
 import javax.inject.Scope
 

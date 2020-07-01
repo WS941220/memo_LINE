@@ -86,11 +86,11 @@ class MainAdapter(
 
 
     class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mainCard = itemView.findViewById<CardView>(R.id.mainCard)
-        val title = itemView.findViewById<TextView>(R.id.title)
-        val content = itemView.findViewById<TextView>(R.id.content)
-        val pic = itemView.findViewById<ImageView>(R.id.pic)
-        val check = itemView.findViewById<CheckBox>(R.id.check)
+        val mainCard: CardView = itemView.findViewById(R.id.mainCard)
+        val title: TextView = itemView.findViewById(R.id.title)
+        val content: TextView = itemView.findViewById(R.id.content)
+        val pic: ImageView = itemView.findViewById(R.id.pic)
+        val check: CheckBox = itemView.findViewById(R.id.check)
 
     }
 

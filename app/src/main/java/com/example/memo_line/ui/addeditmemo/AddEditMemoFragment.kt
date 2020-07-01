@@ -25,10 +25,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import com.example.memo_line.R
+import com.example.memo_line.di.Scoped.ActivityScoped
 import com.example.memo_line.ui.FullScreenImgActivity
 import com.example.memo_line.ui.main.AddEditMemoContract
 import com.example.memo_line.util.showSnackBar
-import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
@@ -365,6 +365,7 @@ class AddEditMemoFragment : DaggerFragment(), AddEditMemoContract.View,
     /**
      * custom file 경로
      */
+    @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name

@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.memo_line.R
 import com.example.memo_line.data.Memo
+import com.example.memo_line.di.Scoped.ActivityScoped
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.memo_line.ui.addeditmemo.AddEditMemoFragment
 import com.example.memo_line.util.showSnackBar
-import com.example.practice_test.di.Scoped.ActivityScoped
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment

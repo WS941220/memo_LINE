@@ -5,16 +5,16 @@ import com.example.memo_line.base.BasePresenter
 import com.example.memo_line.data.Memo
 import com.example.memo_line.data.source.MemosDataSource
 import com.example.memo_line.data.source.MemosRepository
+import com.example.memo_line.di.Scoped.ActivityScoped
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
-import com.example.practice_test.di.Scoped.ActivityScoped
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 import javax.inject.Inject
 
 @ActivityScoped
 class MainPresenter @Inject constructor(
-    val disposables: CompositeDisposable,
-    val memosRepository: MemosRepository
+    private val disposables: CompositeDisposable,
+    private val memosRepository: MemosRepository
 ) : BasePresenter<MainContract.View?>(), MainContract.Presenter {
 
     private var firstLoad = true

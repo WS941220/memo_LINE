@@ -1,10 +1,11 @@
-package com.example.practice_test.di.module
+package com.example.memo_line.di.moudle
 
+import com.example.memo_line.di.Scoped.ActivityScoped
 import com.example.memo_line.ui.addeditmemo.AddEditMemoActivity
 import com.example.memo_line.ui.addeditmemo.AddEditMemoModule
 import com.example.memo_line.ui.main.MainActivity
 import com.example.memo_line.ui.main.MainModule
-import com.example.practice_test.di.Scoped.ActivityScoped
+
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
